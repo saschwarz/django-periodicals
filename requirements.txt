@@ -1,3 +1,5 @@
 django>=1.5.1
 
 # Additional requirements go here
+django-autoslug==1.7.1
+django-tagging==0.3.1

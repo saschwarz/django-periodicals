@@ -2,8 +2,6 @@
 import datetime
 from django.db import models
 from django.db.models import permalink
-from django.conf import settings
-from tagging.fields import TagField
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from autoslug.fields import AutoSlugField
@@ -13,12 +11,13 @@ try:
     # use tagging_autocomplete if it is installed
     from tagging_autocomplete.models import TagAutocompleteField as TagField
 except ImportError:
-    pass
+    from tagging.fields import TagField
 
 
 class ActiveLinkManager(models.Manager):
     def get_query_set(self):
-        return super(ActiveLinkManager, self).get_query_set().filter(status=self.model.STATUS_ACTIVE)
+        return super(ActiveLinkManager, self).get_query_set().\
+            filter(status=self.model.STATUS_ACTIVE)
 
 
 class LinkItem(models.Model):
@@ -55,9 +54,10 @@ class LinkItem(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_article_detail', (), {'periodical_slug':self.issue.periodical.slug,
-                                                   'issue_slug':self.issue.slug,
-                                                   'slug':self.slug})
+        return ('periodicals_article_detail', (),
+                {'periodical_slug': self.issue.periodical.slug,
+                 'issue_slug': self.issue.slug,
+                 'slug': self.slug})
 
 TITLE_CHOICES = (
     ('MR', _('Mr.')),
@@ -68,13 +68,18 @@ TITLE_CHOICES = (
 
 
 class Author(models.Model):
-    title = models.CharField(_("title"), max_length=3, choices=TITLE_CHOICES, blank=True)
+    title = models.CharField(_("title"),
+                             max_length=3,
+                             choices=TITLE_CHOICES,
+                             blank=True)
     first_name = models.CharField(_("first name"), max_length=100)
     middle_name = models.CharField(_("middle name"), max_length=50, blank=True)
     last_name = models.CharField(_("last name"), max_length=100)
-    postnomial = models.CharField(_("postnomial"), max_length=100, blank=True, help_text=_("i.e. PhD, DVM"))
+    postnomial = models.CharField(_("postnomial"), max_length=100, blank=True,
+                                  help_text=_("i.e. PhD, DVM"))
     website = models.URLField(_("website"), blank=True)
-    alt_website = models.URLField(_("website"), blank=True, help_text=_("Alternate website for this author"))
+    alt_website = models.URLField(_("website"), blank=True,
+                                  help_text=_("Alternate website for this author"))
     blog = models.URLField(_("blog"), blank=True)
     email = models.EmailField(_("email"), blank=True)
     slug = models.SlugField(_("slug"), max_length=200, unique=True)
@@ -96,10 +101,10 @@ class Author(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_author_detail', (), {'slug':self.slug})
+        return ('periodicals_author_detail', (), {'slug': self.slug})
 
     def save(self, force_insert=False, force_update=False):
-        if not self.id and not self.slug: # use the user's slug if supplied
+        if not self.id and not self.slug:  # use the user's slug if supplied
             # don't transmogrify slug/URL on update
 
                 self.slug = slugify(" ".join([self.last_name,
@@ -121,6 +126,7 @@ class Author(models.Model):
 def logo_upload(instance, filename):
     full_path = "%s/logo" % (instance.name.lower())
     return full_path
+
 
 class Periodical(models.Model):
     name = models.CharField(_("name"), max_length=100)
@@ -147,41 +153,60 @@ class Periodical(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_periodical_detail', (), {'slug':self.slug})
+        return ('periodicals_periodical_detail', (), {'slug': self.slug})
 
     def save(self, force_insert=False, force_update=False):
         # don't transmogrify slug/URL on update
-        if not self.id and not self.slug: # use the user's slug if supplied
+        if not self.id and not self.slug:  # use the user's slug if supplied
                 self.slug = slugify(self.name)
         super(Periodical, self).save(force_insert, force_update)
 
 
 def issue_upload_to(instance, filename, suffix):
-    full_path = "%s/issues/%s-%s-%s" % (instance.periodical.name.lower().replace(' ', ''),
-                                        instance.get_year_display(),
-                                        instance.get_month_display() or slugify(instance.title),
-                                        suffix)
+    full_path = "%s/issues/%s-%s-%s" % (
+        instance.periodical.name.lower().replace(' ', ''),
+        instance.get_year_display(),
+        instance.get_month_display() or slugify(instance.title),
+        suffix)
     return full_path
+
 
 def issue_upload_print(instance, filename):
     return issue_upload_to(instance, filename, "print")
 
+
 def issue_upload_digital(instance, filename):
     return issue_upload_to(instance, filename, "digital")
+
 
 class Issue(models.Model):
     periodical = models.ForeignKey('Periodical')
     volume = models.PositiveIntegerField(_("volume"))
     issue = models.PositiveIntegerField(_("issue"))
     pub_date = models.DateField(default=datetime.datetime.now)
-    title = models.CharField(_("title"), max_length=100, blank=True, help_text=_("title for special issues"))
-    description = models.TextField(_("description"), max_length=200, blank=True)
-    printed_cover = models.ImageField(upload_to=issue_upload_print, blank=True, max_length=200, help_text=_("Upload image of printed issue's cover"))
-    buy_print = models.URLField(_("buy print"), blank=True, help_text=_("URL to buy print issue"))
-    digital_cover = models.ImageField(upload_to=issue_upload_digital, blank=True, max_length=200, help_text=_("Upload image of digital issue's cover"))
-    buy_digital = models.URLField(_("buy digital"), blank=True, help_text=_("URL to buy digital issue"))
-    read_online = models.URLField(_("read online"), blank=True, help_text=_("URL to read online issue"))
-    slug = models.SlugField(max_length=200, unique_for_month="pub_date",
+    title = models.CharField(_("title"), max_length=100, blank=True,
+                             help_text=_("title for special issues"))
+    description = models.TextField(_("description"), max_length=200,
+                                   blank=True)
+    printed_cover = models.ImageField(upload_to=issue_upload_print,
+                                      blank=True,
+                                      max_length=200,
+                                      help_text=_("Upload image of printed issue's cover"))
+    buy_print = models.URLField(_("buy print"),
+                                blank=True,
+                                help_text=_("URL to buy print issue"))
+    digital_cover = models.ImageField(upload_to=issue_upload_digital,
+                                      blank=True,
+                                      max_length=200,
+                                      help_text=_("Upload image of digital issue's cover"))
+    buy_digital = models.URLField(_("buy digital"),
+                                  blank=True,
+                                  help_text=_("URL to buy digital issue"))
+    read_online = models.URLField(_("read online"),
+                                  blank=True,
+                                  help_text=_("URL to read online issue"))
+    slug = models.SlugField(max_length=200,
+                            unique_for_month="pub_date",
                             help_text=_("this field is automatically generated when saved"),
                             blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -201,13 +226,14 @@ class Issue(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_issue_detail', (), {'periodical_slug':self.periodical.slug,
-                                                 'slug':self.slug,
-                                                 })
+        return ('periodicals_issue_detail', (),
+                {'periodical_slug': self.periodical.slug,
+                 'slug': self.slug,
+                 })
 
     def save(self, force_insert=False, force_update=False):
         # slugifying in save so data imported via fixtures gets slugged
-        if not self.id and not self.slug: # use the user's slug if supplied
+        if not self.id and not self.slug:  # use the user's slug if supplied
                 if self.title:
                     # special issues
                     self.slug = slugify(self.title)
@@ -220,7 +246,8 @@ class Issue(models.Model):
         if self.title:
             return self.title
         else:
-            return _("%s Vol. %s No. %s" % (self.get_month_display(), self.volume, self.issue))
+            return _("%s Vol. %s No. %s" % (self.get_month_display(),
+                                            self.volume, self.issue))
 
     def get_date_display(self):
         return self.get_year_display() + " - " + self.get_month_display()
@@ -235,7 +262,8 @@ class Issue(models.Model):
             return self.pub_date.strftime("%b")
 
     def active_links(self):
-        return [link for link in self.links.all() if link.status == LinkItem.STATUS_ACTIVE]
+        return [link for link in self.links.all()
+                if link.status == LinkItem.STATUS_ACTIVE]
 
 
 def article_upload_image(instance, filename):
@@ -243,16 +271,32 @@ def article_upload_image(instance, filename):
                                     instance.slug.lower())
     return full_path
 
+
 class Article(models.Model):
-    series = models.CharField(_("series"), max_length=100)
-    title = models.CharField(_("title"), max_length=200)
-    description = models.TextField(_("description"), max_length=200, blank=True)
-    page = models.PositiveIntegerField(_("page"), blank=True, null=True)
+    series = models.CharField(_("series"),
+                              max_length=100)
+    title = models.CharField(_("title"),
+                             max_length=200)
+    description = models.TextField(_("description"),
+                                   max_length=200,
+                                   blank=True)
+    page = models.PositiveIntegerField(_("page"),
+                                       blank=True,
+                                       null=True)
     tags = TagField()
-    image = models.ImageField(upload_to=article_upload_image, blank=True, max_length=200, help_text=_("Upload image associated with article"))
-    buy_print = models.URLField(_("buy print"), blank=True, help_text=_("URL to buy print article"))
-    buy_digital = models.URLField(_("buy digital"), blank=True, help_text=_("URL to buy digital article"))
-    read_online = models.URLField(_("read online"), blank=True, help_text=_("URL to read online article"))
+    image = models.ImageField(upload_to=article_upload_image,
+                              blank=True,
+                              max_length=200,
+                              help_text=_("Upload image associated with article"))
+    buy_print = models.URLField(_("buy print"),
+                                blank=True,
+                                help_text=_("URL to buy print article"))
+    buy_digital = models.URLField(_("buy digital"),
+                                  blank=True,
+                                  help_text=_("URL to buy digital article"))
+    read_online = models.URLField(_("read online"),
+                                  blank=True,
+                                  help_text=_("URL to read online article"))
     issue = models.ForeignKey('Issue', related_name='articles')
     authors = models.ManyToManyField('Author', related_name='articles')
     created = models.DateTimeField(auto_now_add=True)
@@ -279,8 +323,11 @@ class Article(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_article_detail', (), {'periodical_slug':self.issue.periodical.slug,
-                                                   'issue_slug':self.issue.slug,
-                                                   'slug':self.slug})
+        return ('periodicals_article_detail', (),
+                {'periodical_slug': self.issue.periodical.slug,
+                 'issue_slug': self.issue.slug,
+                 'slug': self.slug})
+
     def active_links(self):
-        return [link for link in self.links.all() if link.status == LinkItem.STATUS_ACTIVE]
+        return [link for link in self.links.all()
+                if link.status == LinkItem.STATUS_ACTIVE]
