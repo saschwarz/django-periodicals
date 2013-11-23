@@ -1,0 +1,81 @@
+{% extends "3column_with_menu.html" %}
+
+{% block title %}{{block.super}} - Periodical - {{periodical.name}} {% endblock %}
+
+{% block localcss %}
+{{block.super}}
+<style type="text/css">
+a.all-authors, a.all-series, a.all-tags, a.year-link {padding-right:10px;font-weight:bold;}
+p.related-links {text-align:center;}
+p.year-list {text-align:center;padding:8px;background:#EEEEEE;border:1px solid #AAAAAA;}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- google_ad_section_start -->
+{% spaceless %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;{{periodical.name}}</div>
+{% if periodical.website or periodical.blog or periodical.logo %}
+<div style="float:right;text-align:center;">
+{% if periodical.logo %}
+<img src="{{MEDIA_URL}}{{periodical.logo}}" style="margin-bottom:10px;"/><br/>
+{% endif %}
+{% load shrinkthewebtags %}
+{% if periodical.website %}
+    <a href="{{periodical.website}}">{% shrinkthewebimage periodical.website 'lg' '' %}</a><br/>
+{% endif %}
+{% if periodical.blog %}
+    <a ref="{{periodical.blog}">{% shrinkthewebimage periodical.blog 'xlg' '' %}</a><br/>
+{% endif %}
+</div>
+{% endif %}
+<h1>{{periodical.name}}</h1>
+<div style="float:left;">
+{% if periodical.publisher %}
+<p>
+{{periodical.publisher}}<br/>
+{{periodical.address_1}}<br/>
+{% if periodical.address_2 %}
+{{periodical.address_1}}<br/>
+{% endif %}
+{{periodical.city}}, {{periodical.state}} {{periodical.zipcode}}<br/>
+{{periodical.country}}
+</p>
+{% endif %}
+<ul>
+{% if periodical.phone %}
+<li>Phone: {{periodical.phone}}</li>
+{% endif %}
+{% if periodical.email %}
+<li>Email: {% load mailhide %}{{periodical.email|mailhide}}</a></li>
+{% endif %}
+{% if periodical.website %}
+<li>Website: <a href="{{periodical.website}}">{{periodical.website}}</a></li>
+{% endif %}
+{% if periodical.blog %}
+<li>Blog: <a href="{{periodical.blog}}">{{periodical.blog}}</a></li>
+{% endif %}
+</ul>
+</div>
+<br style="clear:both;"/>
+<p>
+<img src="http://data.agilitynerd.com/images/icons/Yellow_Red_Star_16x16.png" width="16" height="16" style="vertical-align:middle;"/>&nbsp;<a class="important-link" href="{% url periodicals_read_online periodical.slug %}">Issues and Articles Available FREE Online</a>
+</p><p>
+<img src="http://data.agilitynerd.com/images/icons/Yellow_Red_Star_16x16.png" width="16" height="16" style="vertical-align:middle;"/>&nbsp;<a class="important-link" href="{% url periodicals_links periodical.slug %}">Issues/Articles with Online Blog Posts, Web Pages, Videos</a>
+</p>
+<h2>Years</h2>
+<p class="year-list">
+{% for year in date_list %}
+<a class="year-link" href="{% url periodicals_issue_year periodical.slug,year|date:"Y" %}" class="result-title">{{year|date:"Y"}}</a>&nbsp;
+{% endfor %}
+</p>
+<p class="related-links">
+<a class="all-authors" href="{% url periodicals_authors_list %}" class="result-title">Browse Authors</a>
+<a class="all-series" href="{% url periodicals_series_list periodical.slug %}" class="result-title">Browse Series/Categories</a>
+<a class="all-tags" href="{% url periodicals_tags %}" class="result-title">Browse Tags</a>
+</p>
+{% load periodicals_tags %}
+<div class="copyright">{{periodical|periodical_copyright}}</div>
+{% endspaceless %}
+<!-- google_ad_section_end -->
+{% endblock %}

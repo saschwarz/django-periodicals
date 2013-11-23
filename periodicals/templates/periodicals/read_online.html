@@ -1,0 +1,42 @@
+{% extends "3column_with_menu.html" %}
+{% load i18n %}
+{% block title %}{{block.super}} - Periodical - {{periodical.name}} - Issues and Articles Online{% endblock %}
+
+{% block meta %}
+{{block.super}}
+<meta name="Description" content="{% trans "View all issues and articles that are available free online." %}">
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<!-- google_ad_section_start -->
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles Online</div>
+
+<h1>{{periodical.name}} Issues and Articles Free Online</h1>
+<div style="float:left">
+<h2>Issues Free Online</h2>
+{% for issue in issues %}
+<p><a href="{{issue.get_absolute_url}}" class="result-title">{{issue.get_year_display}} {{issue.get_name_display}}
+{% if issue.printed_cover %}
+<div class="issue-image"><img src="{{MEDIA_URL}}{{issue.printed_cover}}"/></div>
+{% else %}
+{% if issue.digital_cover %}
+<div class="issue-image"><img src="{{MEDIA_URL}}{{issue.digital_cover}}"/></div>
+{% endif %}
+{% endif %}
+</a></p>
+{% endfor %}
+</div>
+<div style="float:right;width:325px;">
+<h2>Articles Free Online</h2>
+{% load periodicals_tags %}
+{% for article in articles %}
+<p>{{ article|article_result}}</p>
+{% endfor %}
+</div>
+<br style="clear:both"/>
+{% load periodicals_tags %}
+<div class="copyright">{{periodical|periodical_copyright}}</div>
+<!-- google_ad_section_end -->
+{% endspaceless %}
+{% endblock %}

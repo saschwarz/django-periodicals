@@ -1,0 +1,43 @@
+{% extends "3column_with_menu.html" %}
+
+{% block title %}{{block.super}} - Periodical Search{% endblock %}
+
+{% block content %}
+{% spaceless %}
+    <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;Periodical Search</div>
+    <h1>Periodical Search</h1>
+{% include "cse/multi_search.html" %}
+<!--    <form method="get" action=".">
+      <div class="fieldWrapper">
+	  {{form.q}}<input type="submit" value="Search">
+      </div>
+    </form>
+-->
+      {% if query %}
+        {% if page.object_list %}
+	    <h2>Search Results</h2>
+            {% for result in page.object_list %}
+                <p>
+                   <a href="{{result.object.get_absolute_url}}" class="result-title">{{ result.object.title }}</a><br/>
+		   {{result.object.issue.periodical.name}} {{result.object.issue.get_year_display}} {{result.object.issue.get_name_display}}
+                </p>
+            {% endfor %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page.has_previous %}
+            <a href="?q={{query}}&page={{ page.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+        </span>
+        {% if page.has_next %}
+            <a href="?q={{query}}&page={{ page.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+        {% else %}
+            <h2>No matching articles found.</h2>
+        {% endif %}
+    {% endif %}
+{% endspaceless %}
+{% endblock %}

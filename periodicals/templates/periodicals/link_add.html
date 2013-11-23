@@ -1,0 +1,44 @@
+{% extends "periodicals/popup.html" %}
+
+{% block meta %}
+<META NAME="robots" CONTENT="noindex,nofollow">
+{% endblock %}
+{% block css %}
+{{block.super}}
+<style type="text/css" media="all">
+#id_title, #id_url {width:210px;}
+.errorlist {margin:0px;padding:0px;font-weight:normal;}
+</style>
+{% endblock %}
+
+{% block body %}
+{{block.super}}
+<h2>Add a Web Page That Refers to This {{object_class}}</h2>
+<form method="post" action="">
+<table>
+<tr><td style="text-align:right;font-weight:bold;">Web Page Title:</td><td>{{form.title}} <span class="required">*</span></td></tr>
+{% if form.title.errors %}
+<tr><td></td><td style="text-align:center">{{form.title.errors}}</td></tr>
+{% endif %}
+<tr><td style="text-align:right;font-weight:bold;">Web Page URL:</td><td>{{form.url}} <span class="required">*</span></td></tr>
+{% if form.url.errors %}
+<tr><td></td><td style="text-align:center">{{form.url.errors}}</td></tr>
+{% endif %}
+<tr><td colspan="2">{{form.recaptcha}}</td></tr>
+{% if form.recaptcha.errors %}
+<tr><td colspan="2" style="text-align:center">{{form.recaptcha.errors}}</td></tr>
+{% endif %}
+<tr><td colspan="2" style="text-align:center;"><input type="submit" value="Add"></td></tr>
+</table>
+</form>
+{% if object.links.all %}
+<h3>Existing Links</h3>
+<table class="article-table">
+<tr class="header"><th>Name/URL</th></tr>
+{% for link in object.active_links %}
+<tr class="{% cycle 'even' 'odd' %}"><td>{{link.title}}<br/><a href="{{link.url}}">{{link.url}}</a></td></tr>
+{% endfor %}
+</table>
+{% endif %}
+</ul>
+{% endblock %}

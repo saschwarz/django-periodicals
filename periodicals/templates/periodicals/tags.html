@@ -1,0 +1,10 @@
+{% extends "3column_with_menu.html" %}
+
+{% block title %}{{block.super}} - All Article Tags {% endblock %}
+
+{% block content %}
+{% load spacify  %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;All Article Tags</div>
+<h1>All Article Tags</h1>
+{% include "periodicals/tag_cloud.html" %}
+{% endblock %}

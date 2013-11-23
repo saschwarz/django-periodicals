@@ -1,0 +1,38 @@
+{% extends "3column_with_menu.html" %}
+{% load i18n %}
+{% block title %}{{block.super}} - {{periodical.name}} - Series: {{series}}{% endblock %}
+
+{% block meta %}
+{{block.super}}
+<meta name="Description" content="{% trans "View all articles in this series for all periodicals in the database." %}">
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_series_list periodical.slug %}">All Article Series</a>&nbsp;>&nbsp;{{series}}</div>
+<!-- google_ad_section_start -->
+<h1>Series: {{series}}</h1>
+<h2>Articles</h2>
+{% load periodicals_tags %}
+{% for article in object_list %}
+<p>{{article|article_result}}</p>
+{% endfor %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?q={{article.get_absolute_url}}&page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?q={{article.get_absolute_url}}&page={{ page_obj.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% load periodicals_tags %}
+<!-- google_ad_section_end -->
+<div class="copyright">{{periodical|periodical_copyright}}</div>
+
+{% endspaceless %}
+{% endblock %}
