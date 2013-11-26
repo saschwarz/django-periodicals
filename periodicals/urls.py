@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
+#from django.conf.urls.defaults import *
+from django.views.generic import TemplateView
 from django.db.models import Count
-from periodicals.models import Author, Periodical, Issue, Article
-from periodicals.views import author_detail, periodical_detail
+from .models import Author, Periodical, Issue, Article
+from .views import AuthorDetail #, periodical_detail
 from haystack.views import SearchView
 from haystack.query import SearchQuerySet
 
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
                        # not in sitemap
                        url(r'^authors/$',
                            'django.views.generic.list_detail.object_list',
-                           {'queryset':Author.objects.annotate(Count('articles')).order_by("last_name", "first_name"),
+                           {'queryset': Author.objects.annotate(Count('articles')).order_by("last_name", "first_name"),
                             },
                            name='periodicals_authors_list',
                            ),
@@ -34,7 +34,7 @@ urlpatterns = patterns('',
                            ),
 
                        url(r'^tags/$',
-                           direct_to_template, {'template':'periodicals/tags.html'},
+                           TemplateView.as_view(template_name='periodicals/tags.html'),
                            name='periodicals_tags',
                            ),
 
@@ -112,7 +112,7 @@ urlpatterns = patterns('',
                        # list of periodicals - not in sitemap
                        url(r'',
                            'django.views.generic.list_detail.object_list',
-                           {'queryset':Periodical.objects.all(),
+                           {'queryset': Periodical.objects.all(),
                             },
                            name='periodicals_list'),
                        )

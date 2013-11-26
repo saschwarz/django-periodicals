@@ -4,14 +4,26 @@ from django.db import models
 from django.db.models import permalink
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
-from autoslug.fields import AutoSlugField
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.forms.models import model_to_dict
+
+from autoslug.fields import AutoSlugField
 try:
     # use tagging_autocomplete if it is installed
     from tagging_autocomplete.models import TagAutocompleteField as TagField
 except ImportError:
     from tagging.fields import TagField
+
+try:
+    settings.PERIODICALS_AUTHOR_FORMAT
+except AttributeError:
+    settings.PERIODICALS_AUTHOR_FORMAT = "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s"
+try:
+    settings.PERIODICALS_AUTHOR_SLUG_FORMAT
+except AttributeError:
+    settings.PERIODICALS_AUTHOR_SLUG_FORMAT = "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s"
 
 
 class ActiveLinkManager(models.Manager):
@@ -21,9 +33,12 @@ class ActiveLinkManager(models.Manager):
 
 
 class LinkItem(models.Model):
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
+    """
+    LinkItem is a link to another article that refers to an Issue or Article.
+    Typically used when someone external to the publisher writes a blog post
+    or other online article that refers to or expands upon the original
+    Issue or Article.
+    """
     STATUS_SUBMITTED = 'S'
     STATUS_ACTIVE = 'A'
     STATUS_DELETED = 'D'
@@ -32,6 +47,10 @@ class LinkItem(models.Model):
         (STATUS_ACTIVE, 'Active'),
         (STATUS_DELETED, 'Deleted'),
     )
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey()
     status = models.CharField(verbose_name=_('status'),
                               max_length=1,
                               choices=STATUS_CHOICES,
@@ -59,26 +78,36 @@ class LinkItem(models.Model):
                  'issue_slug': self.issue.slug,
                  'slug': self.slug})
 
-TITLE_CHOICES = (
-    ('MR', _('Mr.')),
-    ('MRS', _('Mrs.')),
-    ('MS', _('Ms.')),
-    ('DR', _('Dr.')),
-)
-
 
 class Author(models.Model):
+    """
+    The author of an Article.
+    """
+    TITLE_CHOICES = (
+        ('MR', _('Mr.')),
+        ('MRS', _('Mrs.')),
+        ('MS', _('Ms.')),
+        ('DR', _('Dr.')),
+        )
     title = models.CharField(_("title"),
                              max_length=3,
                              choices=TITLE_CHOICES,
                              blank=True)
-    first_name = models.CharField(_("first name"), max_length=100)
-    middle_name = models.CharField(_("middle name"), max_length=50, blank=True)
-    last_name = models.CharField(_("last name"), max_length=100)
-    postnomial = models.CharField(_("postnomial"), max_length=100, blank=True,
+    first_name = models.CharField(_("first name"),
+                                  max_length=100)
+    middle_name = models.CharField(_("middle name"),
+                                   max_length=50,
+                                   blank=True)
+    last_name = models.CharField(_("last name"),
+                                 max_length=100)
+    postnomial = models.CharField(_("postnomial"),
+                                  max_length=100,
+                                  blank=True,
                                   help_text=_("i.e. PhD, DVM"))
-    website = models.URLField(_("website"), blank=True)
-    alt_website = models.URLField(_("website"), blank=True,
+    website = models.URLField(_("website"),
+                              blank=True)
+    alt_website = models.URLField(_("website"),
+                                  blank=True,
                                   help_text=_("Alternate website for this author"))
     blog = models.URLField(_("blog"), blank=True)
     email = models.EmailField(_("email"), blank=True)
@@ -88,16 +117,15 @@ class Author(models.Model):
     class Meta:
         verbose_name = _('author')
         verbose_name_plural = _('authors')
-        unique_together = ("title", "first_name",
-                           "middle_name", "last_name",
+        unique_together = ("title",
+                           "first_name",
+                           "middle_name",
+                           "last_name",
                            "postnomial")
-        ordering = ('last_name',)
+        ordering = ('last_name', 'first_name')
 
     def __unicode__(self):
-        return "%s %s %s %s " % (self.last_name,
-                                 self.first_name,
-                                 self.middle_name,
-                                 self.postnomial)
+        return settings.PERIODICALS_AUTHOR_SLUG_FORMAT % self._instanceFields()
 
     @permalink
     def get_absolute_url(self):
@@ -106,21 +134,18 @@ class Author(models.Model):
     def save(self, force_insert=False, force_update=False):
         if not self.id and not self.slug:  # use the user's slug if supplied
             # don't transmogrify slug/URL on update
-
-                self.slug = slugify(" ".join([self.last_name,
-                                              self.first_name,
-                                              self.middle_name,
-                                              self.postnomial]))
+            self.slug = slugify(settings.PERIODICALS_AUTHOR_SLUG_FORMAT % self._instanceFields())
         super(Author, self).save(force_insert, force_update)
 
     def get_name_display(self):
         if self.first_name or self.middle_name or self.postnomial:
-            return "%s, %s %s %s " % (self.last_name,
-                                      self.first_name,
-                                      self.middle_name,
-                                      self.postnomial)
+            return settings.PERIODICALS_AUTHOR_FORMAT % self._instanceFields()
         else:
             return self.last_name  # no comma
+
+    def _instanceFields(self):
+        return model_to_dict(self,
+                             fields=[field.name for field in self._meta.fields])
 
 
 def logo_upload(instance, filename):
@@ -234,20 +259,20 @@ class Issue(models.Model):
     def save(self, force_insert=False, force_update=False):
         # slugifying in save so data imported via fixtures gets slugged
         if not self.id and not self.slug:  # use the user's slug if supplied
-                if self.title:
-                    # special issues
-                    self.slug = slugify(self.title)
-                else:
-                    # regular issues
-                    self.slug = slugify("%(volume)s %(issue)s" % self.__dict__)
+            if self.title:
+                # special issues have titles and not volume/issues
+                self.slug = slugify(self.title)
+            else:
+                # regular issues
+                self.slug = slugify("%(volume)s %(issue)s" % self.__dict__)
         super(Issue, self).save(force_insert, force_update)
 
     def get_name_display(self):
         if self.title:
             return self.title
         else:
-            return _("%s Vol. %s No. %s" % (self.get_month_display(),
-                                            self.volume, self.issue))
+            return _("%s Vol. %s No. %s") % (self.get_month_display(),
+                                             self.volume, self.issue)
 
     def get_date_display(self):
         return self.get_year_display() + " - " + self.get_month_display()

@@ -1,12 +1,24 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.contrib.contenttypes import generic
-from models import Author, Periodical, Issue, Article, LinkItem
+from .models import Author, Periodical, Issue, Article, LinkItem
+
 
 class AuthorAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('last_name', 'first_name', 'middle_name', 'postnomial')}
-    list_display = ('last_name','first_name', 'middle_name', 'email', 'website', 'blog', 'alt_website' )
+    prepopulated_fields = {'slug':
+                           ('last_name',
+                            'first_name',
+                            'middle_name',
+                            'postnomial')}
+    list_display = ('last_name',
+                    'first_name',
+                    'middle_name',
+                    'email',
+                    'website',
+                    'blog',
+                    'alt_website')
     ordering = ('last_name', 'first_name')
-    search_fields = ['last_name',]
+    search_fields = ['last_name']
     save_on_top = True
 
 
@@ -42,7 +54,17 @@ class ArticleAdmin(admin.ModelAdmin):
     filter_horizontal = ('authors',)
     search_fields = ['title', 'series', 'description', 'tags']
     save_on_top = True
-    fields = ('issue', 'series', 'title', 'description', 'page', 'tags', 'authors', 'slug', 'image', 'buy_print', 'buy_digital', 'read_online')
+    fields = ('issue',
+              'series',
+              'title',
+              'description',
+              'page', 'tags',
+              'authors',
+              'slug',
+              'image',
+              'buy_print',
+              'buy_digital',
+              'read_online')
     inlines = [
         LinkItemInline
     ]

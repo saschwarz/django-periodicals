@@ -1,6 +1,6 @@
 from haystack.sites import site
 from haystack import indexes
-from periodicals.models import Article
+from .models import Article
 
 
 class ArticleIndex(indexes.SearchIndex):
