@@ -20,10 +20,31 @@ try:
     settings.PERIODICALS_AUTHOR_FORMAT
 except AttributeError:
     settings.PERIODICALS_AUTHOR_FORMAT = "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s"
+
 try:
     settings.PERIODICALS_AUTHOR_SLUG_FORMAT
 except AttributeError:
     settings.PERIODICALS_AUTHOR_SLUG_FORMAT = "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s"
+
+try:
+    settings.PERIODICALS_PERIODICAL_FORMAT
+except AttributeError:
+    settings.PERIODICALS_PERIODICAL_FORMAT = "%(name)s"
+
+try:
+    settings.PERIODICALS_PERIODICAL_SLUG_FORMAT
+except AttributeError:
+    settings.PERIODICALS_PERIODICAL_SLUG_FORMAT = "%(name)s"
+
+try:
+    settings.PERIODICALS_ISSUE_FORMAT
+except AttributeError:
+    settings.PERIODICALS_ISSUE_FORMAT = "Vol. %(volume)s No. %(issue)s"
+
+try:
+    settings.PERIODICALS_ISSUE_SLUG_FORMAT
+except AttributeError:
+    settings.PERIODICALS_ISSUE_SLUG_FORMAT = "%(volume)s %(issue)s"
 
 
 class ActiveLinkManager(models.Manager):
@@ -125,7 +146,7 @@ class Author(models.Model):
         ordering = ('last_name', 'first_name')
 
     def __unicode__(self):
-        return settings.PERIODICALS_AUTHOR_SLUG_FORMAT % self._instanceFields()
+        return _(settings.PERIODICALS_AUTHOR_FORMAT) % _instanceFields(self)
 
     @permalink
     def get_absolute_url(self):
@@ -134,18 +155,14 @@ class Author(models.Model):
     def save(self, force_insert=False, force_update=False):
         if not self.id and not self.slug:  # use the user's slug if supplied
             # don't transmogrify slug/URL on update
-            self.slug = slugify(settings.PERIODICALS_AUTHOR_SLUG_FORMAT % self._instanceFields())
+            self.slug = slugify(_(settings.PERIODICALS_AUTHOR_SLUG_FORMAT) % _instanceFields(self))
         super(Author, self).save(force_insert, force_update)
 
-    def get_name_display(self):
+    def display_name(self):
         if self.first_name or self.middle_name or self.postnomial:
-            return settings.PERIODICALS_AUTHOR_FORMAT % self._instanceFields()
+            return _(settings.PERIODICALS_AUTHOR_FORMAT) % _instanceFields(self)
         else:
             return self.last_name  # no comma
-
-    def _instanceFields(self):
-        return model_to_dict(self,
-                             fields=[field.name for field in self._meta.fields])
 
 
 def logo_upload(instance, filename):
@@ -174,7 +191,7 @@ class Periodical(models.Model):
         verbose_name_plural = _('periodicals')
 
     def __unicode__(self):
-        return self.name
+        return _(settings.PERIODICALS_PERIODICAL_FORMAT) % _instanceFields(self)
 
     @permalink
     def get_absolute_url(self):
@@ -183,15 +200,18 @@ class Periodical(models.Model):
     def save(self, force_insert=False, force_update=False):
         # don't transmogrify slug/URL on update
         if not self.id and not self.slug:  # use the user's slug if supplied
-                self.slug = slugify(self.name)
+                self.slug = slugify(_(settings.PERIODICALS_PERIODICAL_SLUG_FORMAT) % _instanceFields(self))
         super(Periodical, self).save(force_insert, force_update)
+
+    def display_name(self):
+        return _(settings.PERIODICALS_PERIODICAL_FORMAT) % _instanceFields(self)
 
 
 def issue_upload_to(instance, filename, suffix):
     full_path = "%s/issues/%s-%s-%s" % (
         instance.periodical.name.lower().replace(' ', ''),
-        instance.get_year_display(),
-        instance.get_month_display() or slugify(instance.title),
+        instance.display_year(),
+        instance.display_month() or slugify(instance.title),
         suffix)
     return full_path
 
@@ -209,9 +229,12 @@ class Issue(models.Model):
     volume = models.PositiveIntegerField(_("volume"))
     issue = models.PositiveIntegerField(_("issue"))
     pub_date = models.DateField(default=datetime.datetime.now)
-    title = models.CharField(_("title"), max_length=100, blank=True,
-                             help_text=_("title for special issues"))
-    description = models.TextField(_("description"), max_length=200,
+    title = models.CharField(_("title"),
+                             max_length=100,
+                             blank=True,
+                             help_text=_("Title for special issues"))
+    description = models.TextField(_("description"),
+                                   max_length=200,
                                    blank=True)
     printed_cover = models.ImageField(upload_to=issue_upload_print,
                                       blank=True,
@@ -232,7 +255,7 @@ class Issue(models.Model):
                                   help_text=_("URL to read online issue"))
     slug = models.SlugField(max_length=200,
                             unique_for_month="pub_date",
-                            help_text=_("this field is automatically generated when saved"),
+                            help_text=_("Automatically generated when saved"),
                             blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -264,27 +287,23 @@ class Issue(models.Model):
                 self.slug = slugify(self.title)
             else:
                 # regular issues
-                self.slug = slugify("%(volume)s %(issue)s" % self.__dict__)
+                self.slug = slugify(_(settings.PERIODICALS_ISSUE_SLUG_FORMAT) % _instanceFields(self))
         super(Issue, self).save(force_insert, force_update)
 
-    def get_name_display(self):
+    def display_name(self):
         if self.title:
             return self.title
         else:
-            return _("%s Vol. %s No. %s") % (self.get_month_display(),
-                                             self.volume, self.issue)
+            return _(settings.PERIODICALS_ISSUE_FORMAT) % _instanceFields(self)
 
-    def get_date_display(self):
-        return self.get_year_display() + " - " + self.get_month_display()
+    def display_date(self):
+        return self.display_year() + " - " + self.display_month()
 
-    def get_year_display(self):
+    def display_year(self):
         return self.pub_date.strftime("%Y")
 
-    def get_month_display(self):
-        if self.title:
-            return ""
-        else:
-            return self.pub_date.strftime("%b")
+    def display_month(self):
+        return self.pub_date.strftime("%b")
 
     def active_links(self):
         return [link for link in self.links.all()
@@ -330,7 +349,7 @@ class Article(models.Model):
                          populate_from='title',
                          unique=True,
                          editable=True,
-                         help_text=_("this field is automatically generated when saved"),
+                         help_text=_("Automatically generated when saved"),
                          blank=True)
     links = generic.GenericRelation(LinkItem)
 
@@ -340,11 +359,6 @@ class Article(models.Model):
 
     def __unicode__(self):
         return " %s - %s" % (self.issue, self.title)
-
-##     def save(self, force_insert=False, force_update=False):
-##         if not self.id and not self.slug: # use the user's slug if supplied
-##             self.slug = slugify(self.title)
-##         super(Article, self).save(force_insert, force_update)
 
     @permalink
     def get_absolute_url(self):
@@ -356,3 +370,9 @@ class Article(models.Model):
     def active_links(self):
         return [link for link in self.links.all()
                 if link.status == LinkItem.STATUS_ACTIVE]
+
+
+# utilities
+def _instanceFields(instance):
+    return model_to_dict(instance,
+                         fields=[field.name for field in instance._meta.fields])

@@ -17,6 +17,7 @@ try:
             "django.contrib.auth",
             "django.contrib.contenttypes",
             "django.contrib.sites",
+            "tagging",
             "periodicals",
         ],
         SITE_ID=1,

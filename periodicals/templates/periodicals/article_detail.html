@@ -1,6 +1,6 @@
 {% extends "3column_with_menu.html" %}
 
-{% block title %}{{block.super}} - {{periodical.name}} - {{issue.get_year_display}} - {{issue.get_name_display}} - {{article.title}}{% endblock %}
+{% block title %}{{block.super}} - {{periodical.name}} - {{issue.display_year}} - {{issue.display_name}} - {{article.title}}{% endblock %}
 
 {% block meta %}
 {{block.super}}
@@ -11,7 +11,7 @@
 
 {% block content %}
 {% spaceless %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;<a href="{{issue.get_absolute_url}}">{{issue.get_name_display}}</a>{% if article.page %}&nbsp;>&nbsp;Page {{article.page}}{% endif %}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;<a href="{{issue.get_absolute_url}}">{{issue.display_name}}</a>{% if article.page %}&nbsp;>&nbsp;Page {{article.page}}{% endif %}</div>
 <table width="100%" style="margin-top:10px"><tr>
 <td style="text-align:left">{% if previous_article %}<a class="important-link" href="{{previous_article.get_absolute_url}}" title="{{previous_article.series}}: {{previous_article.title}}">&lt; Previous Article</a>{% endif %}&nbsp;</td>
 <td style="text-align:right">{% if next_article %}<a class="important-link" href="{{next_article.get_absolute_url}}" title="{{next_article.series}}: {{next_article.title}}">Next Article &gt;</a>{% endif %}&nbsp;</td>
@@ -37,7 +37,7 @@
 {% endwith %}
 <ul>
 {% for author in article.authors.all %}
-<li><a href="{{author.get_absolute_url}}">{{author.get_name_display}}</a></li>
+<li><a href="{{author.get_absolute_url}}">{{author.display_name}}</a></li>
 {% endfor %}
 </ul>
 {% if article.image %}
@@ -100,7 +100,7 @@
 <div class="copyright">{{periodical|periodical_copyright}}</div>
 <table width="100%" style="margin-top:10px"><tr>
 <td width="33%" style="text-align:left">{% if previous_article %}<a class="important-link" href="{{previous_article.get_absolute_url}}" title="{{previous_article.series}}: {{previous_article.title}}">&lt; Previous Article</a>{% endif %}&nbsp;</td>
-<td style="text-align:center"><a class="important-link" href="{{issue.get_absolute_url}}">All {{issue.get_name_display}} Articles</a></td>
+<td style="text-align:center"><a class="important-link" href="{{issue.get_absolute_url}}">All {{issue.display_name}} Articles</a></td>
 <td width="33%" style="text-align:right">{% if next_article %}<a class="important-link" href="{{next_article.get_absolute_url}}" title="{{next_article.series}}: {{next_article.title}}">Next Article &gt;</a>{% endif %}&nbsp;</td>
 </tr></table>
 {% endspaceless %}

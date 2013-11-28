@@ -1,6 +1,6 @@
 {% extends "3column_with_menu.html" %}
 
-{% block title %}{{block.super}} - {{periodical.name}} - {{issue.get_name_display}} - {{issue.get_date_display}}{% endblock %}
+{% block title %}{{block.super}} - {{periodical.name}} - {{issue.display_name}} - {{issue.display_date}}{% endblock %}
 
 {% block meta %}
 {{block.super}}
@@ -11,13 +11,13 @@
 
 {% block content %}
 {% spaceless %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.get_name_display}}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.display_name}}</div>
 <table width="100%" style="margin-top:10px"><tr>
 <td style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}</td>
 <td style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}</td>
 </tr></table>
 
-<h1>{{periodical.name}} {{issue.get_date_display}}</h1>
+<h1>{{periodical.name}} {{issue.display_date}}</h1>
 {% if issue.printed_cover or issue.digital_cover %}
 <div class="article-image">
 {% if issue.printed_cover %}
@@ -52,7 +52,7 @@
 <table class="article-table">
 <tr class="header"><th class="page-header">Page</th><th class="page-title">Title</th><th class="page-authors">Authors</th></tr>
 {% for article in object_list %}
-<tr class="{% cycle 'even' 'odd' %}"><td class="article-page-number">{% if article.page %}<a href="{{article.get_absolute_url}}">{{article.page}}</a>{% else %}&nbsp;{% endif %}</td><td><a href="{{article.get_absolute_url}}">{{article.series}}<br/>{{article.title}}</a></td><td>{% for author in article.authors.all %}<a href="{{author.get_absolute_url}}">{{author.get_name_display}}</a>&nbsp;{% endfor %}</td></tr>
+<tr class="{% cycle 'even' 'odd' %}"><td class="article-page-number">{% if article.page %}<a href="{{article.get_absolute_url}}">{{article.page}}</a>{% else %}&nbsp;{% endif %}</td><td><a href="{{article.get_absolute_url}}">{{article.series}}<br/>{{article.title}}</a></td><td>{% for author in article.authors.all %}<a href="{{author.get_absolute_url}}">{{author.display_name}}</a>&nbsp;{% endfor %}</td></tr>
 {% endfor %}
 </table>
 {% endif %}

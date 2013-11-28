@@ -4,7 +4,7 @@
 import os
 import sys
 
-import django-periodicals
+import periodicals
 
 try:
     from setuptools import setup
