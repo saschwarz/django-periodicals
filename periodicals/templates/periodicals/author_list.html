@@ -1,73 +1,21 @@
-{% extends "3column_with_menu.html" %}
+{% extends "periodicals/base.html" %}
 {% load i18n %}
 {% block title %}{{block.super}} - All Authors {% endblock %}
 
-{% block meta %}
-{{block.super}}
-<meta name="Description" content="{% trans "Listing of all authors and the number of articles in the database." %}">
-{% endblock %}
-
-{% block javascript %}
-{{block.super}}
-<script type="text/javascript">
-jQuery(document).ready(function(){
-
-var grid=jQuery("#author-grid").jqGrid({ datatype: "local",
-height: 580,
-colNames:['Last Name','First Name','# Articles'],
-colModel:[ {name:'last',index:'last',search:true,stype:'text'},
-           {name:'first',index:'first',search:true,stype:'text'},
-           {name:'count',index:'count',sorttype:"int",align:'right'}
-         ],
-	 autowidth:true,
-	 gridview:true,
-         viewsortcols: true,
-onSelectRow:function(id){
-var url = jQuery("#"+id+" td a").attr('href');
-if (url){
-    document.body.style.cursor = "wait"
-    window.location = url;
-}
-}
-});
-
-var mydata = [
-{% for author in object_list %}
-{
- last:'<a title="Click to view articles" href="{{author.get_absolute_url}}">{{author.last_name}}{% if author.postnomial %}, {{author.postnomial}}{% endif %}</a>',
- first:'{{author.first_name}} {{author.middle_name}}',
- count:'{{author.articles__count}}'
-},
-{% endfor %}
-];
-
-for(var i=0;i<=mydata.length;i++){
- grid.addRowData(i+1,mydata[i]);
-}
-});
-</script>
-{% endblock %}
 
 {% block content %}
-{% spaceless %}
-<!-- google_ad_section_start -->
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;All Authors</div>
 <h1>All Authors</h1>
-<p>Click column titles to sort. Click on a row to view all articles by that author.</p>
-<table id="author-grid" class="scroll" cellpadding="0" cellspacing="0">
-{% comment %}
-<thead>
-<tr><th>Last Name</th><th>First Name</th><th>Articles</th></tr>
-</thead>
-<tbody>
-{% for author in object_list %}
-<tr><td><a href="{{author.get_absolute_url}}">{{author.last_name}}{% if author.postnomial %}, {{author.postnomial}}{% endif %}</a></td>
-<td>{{author.first_name}} {{author.middle_name}}</td>
-<td>{{author.articles__count}}</td></tr>
-{% endfor %}
-</tbody>
-{% endcomment %}
+<table class="author-list-table">
+  <thead>
+    <tr><th>Last Name</th><th>First Name</th><th>Articles</th></tr>
+  </thead>
+  <tbody>
+    {% for author in author_list %}
+    <tr><td><a href="{{author.get_absolute_url}}">{{author.last_name}}{% if author.postnomial %}, {{author.postnomial}}{% endif %}</a></td>
+      <td>{{author.first_name}} {{author.middle_name}}</td>
+      <td>{{author.articles__count}}</td></tr>
+    {% endfor %}
+  </tbody>
 </table>
-<!-- google_ad_section_end -->
-{% endspaceless %}
 {% endblock %}

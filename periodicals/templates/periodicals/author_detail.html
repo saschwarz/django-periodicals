@@ -1,35 +1,25 @@
-{% extends "3column_with_menu.html" %}
+{% extends "periodicals/base.html" %}
 {% load i18n %}
 
 {% block title %}{{block.super}} - Author - {{author.display_name}} {% endblock %}
 
-{% block meta %}
-{{block.super}}
-<meta name="Description" content="{% trans "View all articles for this author in the database." %}">
-{% endblock %}
-
 {% block content %}
-{% spaceless %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{% url periodicals_authors_list %}">All Authors</a>&nbsp;>&nbsp;{{author.display_name}}</div>
-<!-- google_ad_section_start -->
 <h1>Author: {{author.display_name}}</h1>
 {% if author.website or author.email or author.blog or author.alt_website %}
-{% load shrinkthewebtags %}
-{% load setting %}
 <h2>Contact Information</h2>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 {% if author.email %}
-{% load mailhide %}
-<tr><td><b>Email:</b></td><td>{{author.email|mailhide}}</td><td></td></tr>
+<tr><td><b>Email:</b></td><td>{{author.email}}</td><td></td></tr>
 {% endif %}
 {% if author.website %}
-<tr><td><b>Website:</b></td><td><a class="important-link" href="{{author.website}}">{{author.website}}</a></td><td style="text-align:center"><a href="{{author.website}}">{% shrinkthewebimage author.website 'lg' '' %}</a><td></tr>
+<tr><td><b>Website:</b></td><td><a class="important-link" href="{{author.website}}">{{author.website}}</a></td><td><td></tr>
 {% endif %}
 {% if author.blog %}
-<tr><td><b>Blog:</b></td><td><a class="important-link" href="{{author.blog}}">{{author.blog}}</a></td><td style="text-align:center"><a href="{{author.blog}}">{% shrinkthewebimage author.blog 'lg' '' %}</a></td></tr>
+<tr><td><b>Blog:</b></td><td><a class="important-link" href="{{author.blog}}">{{author.blog}}</a></td><td></td></tr>
 {% endif %}
 {% if author.alt_website  %}
-<tr><td colspan="2"><a class="important-link" href="{{author.alt_website}}">{% site "name" %} web page for this author</a></td><td></td></tr>
+<tr><td colspan="2"><a class="important-link" href="{{author.alt_website}}">Additional web page for this author</a></td><td></td></tr>
 {% endif %}
 </table>
 {% endif %}
@@ -52,6 +42,4 @@
         {% endif %}
     </span>
 </div>
-<!-- google_ad_section_end -->
-{% endspaceless %}
 {% endblock %}

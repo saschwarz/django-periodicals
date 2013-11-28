@@ -14,17 +14,26 @@ from .models import Author, Periodical, Issue, Article, LinkItem
 #from recaptcha_utils.fields import ReCaptchaField
 
 
+class AuthorList(ListView):
+    model = Author
+    queryset = Author.objects.annotate(Count('articles')).order_by("last_name", "first_name")
+    context_object_name = 'author_list'
+    template_name = 'periodicals/author_list.html'
+
+
 class AuthorDetail(ListView):
     template_name = 'periodicals/author_detail.html'
-    context_object_name = 'author'
+    context_object_name = 'article_list'
     paginate_by = 20
 
     def get_queryset(self):
-        self.author = get_object_or_404(Author, slug=self.args[0])
+        self.author = get_object_or_404(Author, slug=self.kwargs['slug'])
         return self.author.articles.all().select_related().order_by('-issue__pub_date')
 
-
-
+    def get_context_data(self, **kwargs):
+        context = super(AuthorDetail, self).get_context_data(*kwargs)
+        context['author'] = self.author
+        return context
 
 # def series_list(request, periodical_slug):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)

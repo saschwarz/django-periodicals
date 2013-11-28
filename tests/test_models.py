@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-test_django-periodicals
+test_models
 ------------
 
-Tests for `django-periodicals` modules module.
+Tests for `django-periodicals` model module.
 """
 
 from django.test import TestCase
