@@ -1,10 +1,12 @@
 {% extends "periodicals/base.html" %}
-{% load i18n %}
 
 {% block title %}{{block.super}} - Author - {{author.display_name}} {% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_authors_list' %}">All Authors</a>&nbsp;>&nbsp;{{author.display_name}}</div>
+{% endblock breadcrumbs %}
+
 {% block content %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{% url periodicals_authors_list %}">All Authors</a>&nbsp;>&nbsp;{{author.display_name}}</div>
 <h1>Author: {{author.display_name}}</h1>
 {% if author.website or author.email or author.blog or author.alt_website %}
 <h2>Contact Information</h2>
@@ -29,4 +31,4 @@
 <p>{{ article|article_result}}</p>
 {% endfor %}
 </ul>
-{% endblock %}
+{% endblock content %}

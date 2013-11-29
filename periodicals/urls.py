@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.conf.urls import patterns, url
-from .views import AuthorList, AuthorDetail, SeriesList, SeriesDetail
+from .views import (AuthorList, AuthorDetail,
+                    PeriodicalList, PeriodicalDetail,
+                    SeriesList, SeriesDetail)
 
 
 urlpatterns = patterns('',
@@ -10,7 +12,7 @@ urlpatterns = patterns('',
                            name='periodicals_authors_list',
                            ),
 
-                       url(r'^authors/(?P<slug>[-\w]+)/$',
+                       url(r'^authors/(?P<author_slug>[-\w]+)/$',
                            AuthorDetail.as_view(),
                            name='periodicals_author_detail'
                            ),
@@ -38,22 +40,22 @@ urlpatterns = patterns('',
                        #     ),
 
                        # # add a link to an article - don't include in sitemap
-                       # url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<slug>[-\w]+)/$',
+                       # url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<link_slug>[-\w]+)/$',
                        #     'periodicals.views.add_article_link',
                        #     name='periodicals_add_article_link'
                        #     ),
 
                        # # add a link to an issue - don't include in sitemap
-                       # url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<slug>[-\w]+)/$',
+                       # url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<link_slug>[-\w]+)/$',
                        #     'periodicals.views.add_issue_link',
                        #     name='periodicals_add_issue_link'
                        #     ),
 
-                       # # periodical detail including list of periodical's years
-                       # url(r'^(?P<slug>[-\w]+)/$',
-                       #     'periodicals.views.periodical_detail',
-                       #     name='periodicals_periodical_detail'
-                       #     ),
+                       # periodical detail including list of periodical's years
+                       url(r'^(?P<periodical_slug>[-\w]+)/$',
+                           PeriodicalDetail.as_view(),
+                           name='periodicals_periodical_detail'
+                           ),
 
                        # # list of periodical's issues and articles viewable online
                        # url(r'^(?P<periodical_slug>[-\w]+)/online/$',
@@ -74,31 +76,30 @@ urlpatterns = patterns('',
                            ),
 
                        # list of articles in a series - not in sitemap
-                       url(r'^(?P<periodical_slug>[-\w]+)/series/(?P<series_slug>.+)/$',
+                       url(r'^(?P<periodical_slug>[-\w]+)/series/(?P<series>.+)/$',
                            SeriesDetail.as_view(),
                            name='periodicals_series_detail'
                            ),
 
                        # # one periodical issue
-                       # url(r'^(?P<periodical_slug>[-\w]+)/(?P<slug>[-\w]+)/$',
-                       #     'periodicals.views.issue_detail',
+                       # url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/$',
+                       #     IssueDetail.as_view(),
                        #     name='periodicals_issue_detail'
                        #     ),
 
                        # # one article
-                       # url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<slug>[-\w]+)/$',
+                       # url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<article_slug>[-\w]+)/$',
                        #     'periodicals.views.article_detail',
                        #     name='periodicals_article_detail'
                        #     ),
 
-                       # # list of periodicals - not in sitemap
-                       # url(r'',
-                       #     'django.views.generic.list_detail.object_list',
-                       #     {'queryset': Periodical.objects.all(),
-                       #      },
-                       #     name='periodicals_list'),
-                       # )
-)
+                       # list of periodicals - not in sitemap
+                       url(r'',
+                           PeriodicalList.as_view(),
+                           name='periodicals_list'
+                           ),
+                       )
+
 
 # Haystack search support is optional
 try:

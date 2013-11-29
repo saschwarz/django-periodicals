@@ -97,7 +97,7 @@ class LinkItem(models.Model):
         return ('periodicals_article_detail', (),
                 {'periodical_slug': self.issue.periodical.slug,
                  'issue_slug': self.issue.slug,
-                 'slug': self.slug})
+                 'link_slug': self.slug})
 
 
 class Author(models.Model):
@@ -150,7 +150,7 @@ class Author(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_author_detail', (), {'slug': self.slug})
+        return ('periodicals_author_detail', (), {'author_slug': self.slug})
 
     def save(self, force_insert=False, force_update=False):
         if not self.id and not self.slug:  # use the user's slug if supplied
@@ -195,7 +195,9 @@ class Periodical(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('periodicals_periodical_detail', (), {'slug': self.slug})
+        return ('periodicals_periodical_detail',
+                (),
+                {'periodical_slug': self.slug})
 
     def save(self, force_insert=False, force_update=False):
         # don't transmogrify slug/URL on update
@@ -276,7 +278,7 @@ class Issue(models.Model):
     def get_absolute_url(self):
         return ('periodicals_issue_detail', (),
                 {'periodical_slug': self.periodical.slug,
-                 'slug': self.slug,
+                 'issue_slug': self.slug,
                  })
 
     def save(self, force_insert=False, force_update=False):
@@ -365,7 +367,7 @@ class Article(models.Model):
         return ('periodicals_article_detail', (),
                 {'periodical_slug': self.issue.periodical.slug,
                  'issue_slug': self.issue.slug,
-                 'slug': self.slug})
+                 'article_slug': self.slug})
 
     def active_links(self):
         return [link for link in self.links.all()

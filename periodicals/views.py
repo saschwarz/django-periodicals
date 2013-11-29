@@ -1,4 +1,4 @@
-from django.views.generic import DetailView, ListView
+from django.views.generic import ArchiveIndexView, DetailView, ListView
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.template import RequestContext
@@ -25,6 +25,7 @@ class AuthorList(ListView):
 class AuthorDetail(DetailView):
     model = Author
     context_object_name = 'author'
+    slug_url_kwarg = 'author_slug'
     template_name = 'periodicals/author_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -60,28 +61,17 @@ class SeriesDetail(ListView):
     def get_queryset(self):
         self.periodical = get_object_or_404(Periodical,
                                             slug=self.kwargs['periodical_slug'])
-        self.series_slug = self.kwargs['series_slug']
+        self.series = self.kwargs['series']
+        return Article.objects.filter(series=self.series)
         return Article.objects.filter(issue__periodical=self.periodical).\
-            filter(series=self.series_slug).\
-            select_related().order_by('-issue__pub_date'),
+            filter(series=self.series).\
+            select_related().order_by('-issue__pub_date')
 
     def get_context_data(self, **kwargs):
         context = super(SeriesDetail, self).get_context_data(**kwargs)
         context['periodical'] = self.periodical
-        context['series'] = self.series_slug
+        context['series'] = self.series
         return context
-
-
-# def series_detail(request, periodical_slug, series_slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     return object_list(request,
-#                        # get_absolute_url() needs related Periodical and Issue
-#                        queryset=Article.objects.filter(series=series_slug).select_related().order_by('-issue__pub_date'),
-#                        template_name='periodicals/series_detail.html',
-#                        paginate_by=20,
-#                        extra_context={'periodical':periodical,
-#                                       'series':series_slug}
-#                        )
 
 
 # # when related_tags=True can't yet pass a QuerySet:
@@ -107,6 +97,30 @@ class SeriesDetail(ListView):
 # #                               related_tags=True,
 # #                               related_tag_counts=True,
 # #                               paginate_by=20)
+
+
+class PeriodicalList(ListView):
+    model = Periodical
+    template_name = 'periodicals/periodical_list.html'
+
+
+class PeriodicalDetail(ArchiveIndexView):
+    model = Issue
+    date_field = 'pub_date'
+    allow_future = True
+    template_name = 'periodicals/periodical_detail.html'
+    slug_url_kwarg = 'periodical_slug'
+
+    def get_queryset(self):
+        self.periodical_slug = self.kwargs['periodical_slug']
+        qs = super(PeriodicalDetail, self).get_queryset()
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(PeriodicalDetail, self).get_context_data(**kwargs)
+        periodical = get_object_or_404(Periodical, slug=self.periodical_slug)
+        context['periodical'] = periodical
+        return context
 
 # def periodical_detail(request, slug):
 #     periodical = get_object_or_404(Periodical, slug=slug)

@@ -1,15 +1,18 @@
 {% extends "periodicals/base.html" %}
-{% load i18n %}
 
 {% block title %}{{block.super}} - {{periodical.name}} - Series: {{series}}{% endblock %}
 
-{% block content %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_series_list periodical.slug %}">All Article Series</a>&nbsp;>&nbsp;{{series}}</div>
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_series_list' periodical.slug %}">All Article Series</a>&nbsp;>&nbsp;{{series}}</div>
+{% endblock breadcrumbs %}
 
+{% block content %}
 <h1>Series: {{series}}</h1>
 <h2>Articles</h2>
 {% load periodicals_tags %}
+{% comment %}
 {% for article in article_list %}
-<p>{{article|article_result}}</p>
+<p>{{article | article_result}}</p>
 {% endfor %}
-{% endblock %}
+{% endcomment %}
+{% endblock content %}
