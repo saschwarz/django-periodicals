@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.conf.urls import patterns, url
-from .views import AuthorList, AuthorDetail
+from .views import AuthorList, AuthorDetail, SeriesList, SeriesDetail
 
 
 urlpatterns = patterns('',
@@ -14,7 +14,7 @@ urlpatterns = patterns('',
                            AuthorDetail.as_view(),
                            name='periodicals_author_detail'
                            ),
-)
+
                        # url(r'^tags/$',
                        #     TemplateView.as_view(template_name='periodicals/tags.html'),
                        #     name='periodicals_tags',
@@ -67,17 +67,17 @@ urlpatterns = patterns('',
                        #     name='periodicals_issue_year'
                        #     ),
 
-                       # # list of periodical's series - not in sitemap
-                       # url(r'^(?P<periodical_slug>[-\w]+)/series/$',
-                       #     'periodicals.views.series_list',
-                       #     name='periodicals_series_list'
-                       #     ),
+                       # list of periodical's series - not in sitemap
+                       url(r'^(?P<periodical_slug>[-\w]+)/series/$',
+                           SeriesList.as_view(),
+                           name='periodicals_series_list'
+                           ),
 
-                       # # list of articles in a series - not in sitemap
-                       # url(r'^(?P<periodical_slug>[-\w]+)/series/(?P<series_slug>.+)/$',
-                       #     'periodicals.views.series_detail',
-                       #     name='periodicals_series_detail'
-                       #     ),
+                       # list of articles in a series - not in sitemap
+                       url(r'^(?P<periodical_slug>[-\w]+)/series/(?P<series_slug>.+)/$',
+                           SeriesDetail.as_view(),
+                           name='periodicals_series_detail'
+                           ),
 
                        # # one periodical issue
                        # url(r'^(?P<periodical_slug>[-\w]+)/(?P<slug>[-\w]+)/$',
@@ -98,6 +98,7 @@ urlpatterns = patterns('',
                        #      },
                        #     name='periodicals_list'),
                        # )
+)
 
 # Haystack search support is optional
 try:

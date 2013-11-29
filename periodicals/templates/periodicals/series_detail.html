@@ -1,20 +1,14 @@
-{% extends "3column_with_menu.html" %}
+{% extends "periodicals/base.html" %}
 {% load i18n %}
 {% block title %}{{block.super}} - {{periodical.name}} - Series: {{series}}{% endblock %}
 
-{% block meta %}
-{{block.super}}
-<meta name="Description" content="{% trans "View all articles in this series for all periodicals in the database." %}">
-{% endblock %}
-
 {% block content %}
-{% spaceless %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_series_list periodical.slug %}">All Article Series</a>&nbsp;>&nbsp;{{series}}</div>
-<!-- google_ad_section_start -->
+
 <h1>Series: {{series}}</h1>
 <h2>Articles</h2>
 {% load periodicals_tags %}
-{% for article in object_list %}
+{% for article in article_list %}
 <p>{{article|article_result}}</p>
 {% endfor %}
 <div class="pagination">
@@ -30,9 +24,4 @@
         {% endif %}
     </span>
 </div>
-{% load periodicals_tags %}
-<!-- google_ad_section_end -->
-<div class="copyright">{{periodical|periodical_copyright}}</div>
-
-{% endspaceless %}
 {% endblock %}

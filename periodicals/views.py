@@ -1,5 +1,4 @@
-from django.views.generic import ListView
-#from django.views.generic.date_based import archive_index, archive_year, archive_month
+from django.views.generic import DetailView, ListView
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.template import RequestContext
@@ -9,40 +8,68 @@ from django.http import HttpResponseRedirect
 from django.core.mail import mail_managers
 from django.core import urlresolvers
 from django.contrib.sites.models import Site
+
 # from tagging.views import tagged_object_list
+# from recaptcha_utils.fields import ReCaptchaField
 from .models import Author, Periodical, Issue, Article, LinkItem
-#from recaptcha_utils.fields import ReCaptchaField
 
 
 class AuthorList(ListView):
     model = Author
-    queryset = Author.objects.annotate(Count('articles')).order_by("last_name", "first_name")
     context_object_name = 'author_list'
+    queryset = Author.objects.annotate(Count('articles')).\
+        order_by("last_name", "first_name")
     template_name = 'periodicals/author_list.html'
 
 
-class AuthorDetail(ListView):
+class AuthorDetail(DetailView):
+    model = Author
+    context_object_name = 'author'
     template_name = 'periodicals/author_detail.html'
-    context_object_name = 'article_list'
-    paginate_by = 20
-
-    def get_queryset(self):
-        self.author = get_object_or_404(Author, slug=self.kwargs['slug'])
-        return self.author.articles.all().select_related().order_by('-issue__pub_date')
 
     def get_context_data(self, **kwargs):
-        context = super(AuthorDetail, self).get_context_data(*kwargs)
-        context['author'] = self.author
+        context = super(AuthorDetail, self).get_context_data(**kwargs)
+        author = context['author']
+        context['article_list'] = author.articles.all().\
+            select_related().order_by('-issue__pub_date')
         return context
 
-# def series_list(request, periodical_slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     return object_list(request,
-#                        # get_absolute_url() needs related Periodical and Issue
-#                        queryset=Article.objects.filter(issue__periodical=periodical).order_by('series').values('series').annotate(series_count=Count('series')),
-#                        template_name='periodicals/series_list.html',
-#                        extra_context={'periodical':periodical}
-#                        )
+
+class SeriesList(ListView):
+    model = Article
+    context_object_name = 'series_list'
+    template_name = 'periodicals/series_list.html'
+
+    def get_queryset(self):
+        self.periodical = get_object_or_404(Periodical,
+                                       slug=self.kwargs['periodical_slug'])
+        return Article.objects.filter(issue__periodical=self.periodical).\
+            order_by('series').values('series').annotate(series_count=Count('series'))
+
+    def get_context_data(self, **kwargs):
+        context = super(SeriesList, self).get_context_data(**kwargs)
+        context['periodical'] = self.periodical
+        return context
+
+
+class SeriesDetail(ListView):
+    model = Article
+    context_object_name = 'article_list'
+    template_name = 'periodicals/series_detail.html'
+
+    def get_queryset(self):
+        self.periodical = get_object_or_404(Periodical,
+                                            slug=self.kwargs['periodical_slug'])
+        self.series_slug = self.kwargs['series_slug']
+        return Article.objects.filter(issue__periodical=self.periodical).\
+            filter(series=self.series_slug).\
+            select_related().order_by('-issue__pub_date'),
+
+    def get_context_data(self, **kwargs):
+        context = super(SeriesDetail, self).get_context_data(**kwargs)
+        context['periodical'] = self.periodical
+        context['series'] = self.series_slug
+        return context
 
 
 # def series_detail(request, periodical_slug, series_slug):

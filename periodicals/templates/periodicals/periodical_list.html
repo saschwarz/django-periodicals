@@ -17,7 +17,7 @@
   </div>
 </form>
 <p style="text-align:center">
-{% for periodical in object_list %}
+{% for periodical in periodical_list %}
 <span style="padding-right:10px"><a href="{{periodical.get_absolute_url}}" class="result-title">Browse {{periodical.name}}</a></span>
 {% endfor %}
 <span><a href="{% url periodicals_authors_list %}" class="result-title">Browse Authors</a></span>

@@ -8,6 +8,7 @@ from periodicals.models import Article
 
 register = template.Library()
 
+
 def article_result(article, autoescape=None):
     if autoescape:
         esc = conditional_escape
@@ -22,24 +23,28 @@ def article_result(article, autoescape=None):
     if article.description:
         result += '''<div class="result-desc">%s</div>''' % esc(article.description)
 
-    result += '''<div class="result-issue-info">%s %s %s''' % (esc(article.issue.periodical.name),
-                            esc(article.issue.get_year_display()),
-                            esc(article.issue.get_name_display()))
+    result += '''<div class="result-issue-info">%s %s %s''' % (
+        esc(article.issue.periodical.name),
+        esc(article.issue.get_year_display()),
+        esc(article.issue.get_name_display()))
+
     if article.page:
         result += " %s: %s" % (_("Page"),
-                              esc(article.page))
+                               esc(article.page))
     result += '</div>'
     authors = [esc(author.get_name_display()) for author in article.authors.all()]
     if authors:
-        result += '''<div class="result-author">%s: %s</div>''' % (len(authors)>1 and _("Authors") or _("Author"),
-                                   ",".join(authors))
+        result += '''<div class="result-author">%s: %s</div>''' % (
+            len(authors) > 1 and _("Authors") or _("Author"),
+            ",".join(authors))
 
     if article.tags:
-        result += '''<div class="result-tags">%s: %s</div>''' % (_("Tags"), article.tags.replace('"',''))
+        result += '''<div class="result-tags">%s: %s</div>''' % (
+            _("Tags"), article.tags.replace('"', ''))
     result += "</p>"
     return mark_safe(result)
 
-article_result.needs_autoescape=True
+article_result.needs_autoescape = True
 register.filter('article_result', article_result)
 
 
@@ -50,11 +55,12 @@ def periodical_copyright(periodical, autoescape=None):
         esc = lambda x: x
 
     text = _('Titles, descriptions and images are copyright %(publisher)s and are used with permission.')
-    result = text % (dict(publisher='''<a href="%s">%s</a>''' % (esc(periodical.website),
-                                                                 esc(periodical.publisher))))
+    result = text % (dict(publisher='''<a href="%s">%s</a>''' % (
+                esc(periodical.website),
+                esc(periodical.publisher))))
     return mark_safe(result)
 
-periodical_copyright.needs_autoescape=True
+periodical_copyright.needs_autoescape = True
 register.filter('periodical_copyright', periodical_copyright)
 
 
