@@ -1,21 +1,21 @@
-{% extends "3column_with_menu.html" %}
-{% load i18n %}
+{% extends "periodicals/base.html" %}
+
 {% block title %}{{ block.super }} - {{periodical.name}} - Issues for {{year}} {% endblock %}
 
-{% block meta %}
-{{block.super}}
-<meta name="Description" content="{% trans "View all issues for this year in the database." %}">
-{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a> > {{year|date:"Y"}}</div>
+{% endblock breadcrumbs %}
 
 {% block content %}
-{% spaceless %}
-<!-- google_ad_section_start -->
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a> > {{year}}</div>
-<table width="100%" style="margin-top:10px"><tr>
-<td style="text-align:left">{% if previous_year %}<a class="important-link" href="{% url periodicals_issue_year periodical.slug, previous_year %}">&lt; {{previous_year}}</a>{% endif %}&nbsp;</td>
-<td style="text-align:right">{% if next_year %}<a class="important-link" href="{% url periodicals_issue_year periodical.slug, next_year %}">{{next_year}} &gt;</a>{% endif %}&nbsp;</td>
-</tr></table>
-<h1>{{periodical.name}} Issues for {{year}}</h1>
+{% with next=next_year|date:"Y" previous=previous_year|date:"Y" %}
+<table width="100%" style="margin-top:10px">
+  <tr>
+    <td style="text-align:left">{% if previous_year %}<a class="important-link" href="{% url 'periodicals_issue_year' periodical.slug previous %}">&lt; {{previous}}</a>{% endif %}&nbsp;</td>
+    <td style="text-align:right">{% if next_year %}<a class="important-link" href="{% url 'periodicals_issue_year' periodical.slug next %}">{{next}} &gt;</a>{% endif %}&nbsp;</td>
+  </tr>
+</table>
+<h1>{{periodical.name}} Issues for {{year|date:"Y"}}</h1>
 <table class="issue-year-issues"><tr>
 {% for issue in object_list %}
 <td><a href="{{issue.get_absolute_url}}" class="result-title">{{issue.display_name}}
@@ -36,13 +36,12 @@
 {% endif %}
 {% endfor %}
 </table>
-{% load periodicals_tags %}
-<div class="copyright">{{periodical|periodical_copyright}}</div>
-<!-- google_ad_section_end -->
-<table width="100%" style="margin-top:10px"><tr>
-<td width="33%" style="text-align:left">{% if previous_year %}<a class="important-link" href="{% url periodicals_issue_year periodical.slug, previous_year %}">&lt; {{previous_year}}</a>{% endif %}&nbsp;</td>
-<td style="text-align:center"><a class="important-link" href="{{periodical.get_absolute_url}}">All {{periodical}} Years</a></td>
-<td width="33%"  style="text-align:right">{% if next_year %}<a class="important-link" href="{% url periodicals_issue_year periodical.slug, next_year %}">{{next_year}} &gt;</a>{% endif %}&nbsp;</td>
-</tr></table>
-{% endspaceless %}
-{% endblock %}
+<table width="100%" style="margin-top:10px">  
+  <tr>
+    <td width="33%" style="text-align:left">{% if previous_year %}<a class="important-link" href="{% url 'periodicals_issue_year' periodical.slug previous %}">&lt; {{previous}}</a>{% endif %}&nbsp;</td>
+    <td style="text-align:center"><a class="important-link" href="{{periodical.get_absolute_url}}">All {{periodical}} Years</a></td>
+    <td width="33%"  style="text-align:right">{% if next_year %}<a class="important-link" href="{% url 'periodicals_issue_year' periodical.slug next %}">{{next}} &gt;</a>{% endif %}&nbsp;</td>
+  </tr>
+</table>
+{% endwith %}
+{% endblock content %}

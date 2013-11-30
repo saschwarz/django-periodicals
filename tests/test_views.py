@@ -58,7 +58,7 @@ class TestSetup(TestCase):
         article1.authors.add(author)
 
 
-class TestAuthorViews(TestSetup):
+class TestAuthorView(TestSetup):
 
     def test_authors_list(self):
         resp = self.client.get(reverse('periodicals_authors_list'))
@@ -80,7 +80,7 @@ class TestAuthorViews(TestSetup):
         self.assertEqual(2, len(article_list))
 
 
-class TestSeriesViews(TestSetup):
+class TestSeriesView(TestSetup):
 
     def test_series_list(self):
         resp = self.client.get(reverse('periodicals_series_list',
@@ -109,7 +109,7 @@ class TestSeriesViews(TestSetup):
         self.assertTrue(isinstance(article_list[0], Article))
 
 
-class TestPeriodicalViews(TestSetup):
+class TestPeriodicalView(TestSetup):
 
     def test_periodical_detail(self):
         resp = self.client.get(reverse('periodicals_periodical_detail',
@@ -122,7 +122,7 @@ class TestPeriodicalViews(TestSetup):
         self.assertEqual(1, len(issue_list))
 
 
-class TestIssueViews(TestSetup):
+class TestIssueView(TestSetup):
 
     def test_issue_detail(self):
         resp = self.client.get(reverse('periodicals_issue_detail',
@@ -147,3 +147,67 @@ class TestIssueViews(TestSetup):
                            )
         self.assertRaises(IntegrityError, dup_issue1.save)
         self.assertEqual(dup_issue1.slug, self.issue1.slug)
+
+
+class TestIssueYearView(TestSetup):
+
+    def test_issue_year(self):
+        resp = self.client.get(reverse('periodicals_issue_year',
+                                       kwargs={'periodical_slug': 'mad-magazine',
+                                               'year': 2011,
+                                               }))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/issue_year.html')
+        periodical = resp.context['periodical']
+        self.assertEqual(self.periodical, periodical)
+        issue_list = resp.context['date_list']
+        self.assertEqual(3, len(issue_list))
+        year = resp.context['year']
+        self.assertEqual('2011', year.strftime('%Y'))
+        next_year = resp.context['next_year']
+        self.assertEqual(None, next_year)
+        previous_year = resp.context['previous_year']
+        self.assertEqual(None, previous_year)
+
+    def test_with_same_issues_in_multiple_periodicals(self):
+        periodical = Periodical(name="Crazy Cat")
+        periodical.save()
+        issue10 = Issue(periodical=periodical,
+                       volume=0,
+                       issue=10,
+                       pub_date=datetime.strptime('2010-01-01', '%Y-%m-%d')
+                       )
+        issue10.save()
+        issue0 = Issue(periodical=periodical,
+                       volume=1,
+                       issue=10,
+                       pub_date=datetime.strptime('2011-10-01', '%Y-%m-%d')
+                       )
+        issue0.save()
+        issue1 = Issue(periodical=periodical,
+                       volume=1,
+                       issue=11,
+                       pub_date=datetime.strptime('2011-11-01', '%Y-%m-%d')
+                       )
+        issue1.save()
+        issue2 = Issue(periodical=periodical,
+                       volume=2,
+                       issue=1,
+                       pub_date=datetime.strptime('2012-01-01', '%Y-%m-%d')
+                       )
+        issue2.save()
+        url = reverse('periodicals_issue_year',
+                                       kwargs={'periodical_slug': 'crazy-cat',
+                                               'year': '2011',
+                                               })
+        resp = self.client.get(url)
+        self.assertEqual(200, resp.status_code)
+        issue_list = resp.context['date_list']
+        self.assertEqual(2, len(issue_list))
+        year = resp.context['year']
+        self.assertEqual('2011', year.strftime('%Y'))
+        next_year = resp.context['next_year']
+        self.assertEqual('2012', next_year.strftime('%Y'))
+        previous_year = resp.context['previous_year']
+        self.assertEqual('2010', previous_year.strftime('%Y'))
+        

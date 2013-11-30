@@ -1,4 +1,4 @@
-from django.views.generic import ArchiveIndexView, DetailView, ListView, TemplateView
+from django.views.generic import ArchiveIndexView, DetailView, ListView, TemplateView, YearArchiveView
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.template import RequestContext
@@ -124,22 +124,25 @@ class PeriodicalDetail(ArchiveIndexView):
         return context
 
 
-# def issue_year(request, periodical_slug, year):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     next = int(year)+1
-#     next_year = Issue.objects.filter(periodical=periodical).filter(pub_date__year=next).count() and next or None
-#     previous = int(year)-1
-#     previous_year = Issue.objects.filter(periodical=periodical).filter(pub_date__year=previous).count() and previous or None
-#     return archive_year(request,
-#                         year,
-#                         Issue.objects.filter(periodical=periodical).all().select_related().order_by("pub_date"),
-#                         'pub_date',
-#                         template_name='periodicals/issue_year.html',
-#                         extra_context={'periodical': periodical,
-#                                        'next_year': next_year,
-#                                        'previous_year': previous_year},
-#                         make_object_list=True,
-#                         allow_future=True)
+class IssueYear(YearArchiveView):
+    queryset = Issue.objects.all()
+    date_field = 'pub_date'
+    make_object_list = True
+    allow_future = False
+    template_name = 'periodicals/issue_year.html'
+
+    def get_queryset(self):
+        periodical_slug = self.kwargs['periodical_slug']
+        periodical = get_object_or_404(Periodical, slug=periodical_slug)
+        self.periodical = periodical
+        qs = super(IssueYear, self).get_queryset().filter(periodical=periodical)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(IssueYear, self).get_context_data(**kwargs)
+        context['periodical'] = self.periodical
+        return context
+
 
 class IssueDetail(TemplateView):
     # issue_slug is only unique per month so can't use
@@ -211,29 +214,6 @@ class ArticleDetail(DetailView):
         context['next_article'] = next_article
         return context
 
-# def article_detail(request, periodical_slug, issue_slug, slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
-#     article = get_object_or_404(Article, slug=slug, issue=issue)
-#     if article.page:
-#         next_article = Article.objects.filter(issue=issue).filter(page__gt=article.page).order_by('page')
-#         if next_article:
-#             next_article = next_article[0]
-#         previous_article = Article.objects.filter(issue=issue).filter(page__lt=article.page).order_by('-page')
-#         if previous_article:
-#             previous_article = previous_article[0]
-#     else:
-#         next_article = previous_article = None
-#     return render_to_response('periodicals/article_detail.html',
-#                               {'article' : article,
-#                                'issue': issue,
-#                                'periodical': periodical,
-#                                'next_article': next_article,
-#                                'previous_article': previous_article
-#                                },
-#                               context_instance=RequestContext(request)
-#                               )
-
 
 # def read_online(request, periodical_slug):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)
@@ -257,20 +237,22 @@ class ArticleDetail(DetailView):
 # def add_issue_link(request, periodical_slug, slug):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)
 #     issue = get_object_or_404(Issue, slug=slug, periodical=periodical)
-#     return add_link(request, issue,
-#                     admin_url=urlresolvers.reverse('admin:periodicals_issue_change', args=(issue.id,)))
+#     return add_link(request,
+#                     issue,
+#                     admin_url=urlresolvers.reverse('admin:periodicals_issue_change', 
+#                                                    args=(issue.id,)))
 
 
 # def links(request, periodical_slug):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)
 #     # Load all the links and their related Issues/Article instances efficiently
-#     article_type = ContentType.objects.get_for_model(Article)
+# #    article_type = ContentType.objects.get_for_model(Article)
 #     articles = Article.objects.filter(issue__periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-issue__pub_date')
-#     issue_type = ContentType.objects.get_for_model(Issue)
+# #    issue_type = ContentType.objects.get_for_model(Issue)
 #     issues = Issue.objects.filter(periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-pub_date')
 
 #     return render_to_response('periodicals/links.html',
-#                               {'articles' : articles,
+#                               {'articles': articles,
 #                                'issues': issues,
 #                                'periodical': periodical,
 #                                },
@@ -281,7 +263,7 @@ class ArticleDetail(DetailView):
 # class LinkItemForm(forms.Form):
 #     title = forms.CharField()
 #     url = forms.URLField()
-#     recaptcha = ReCaptchaField()
+# #     recaptcha = ReCaptchaField()
 
 
 # def add_link(request, object,
@@ -292,16 +274,16 @@ class ArticleDetail(DetailView):
 #     if request.method == 'POST':
 #         form = form_class(data=request.POST)
 #         if form.is_valid():
-#              link = object.links.create(status='S',
-#                                         url=form.cleaned_data['url'],
-#                                         title=form.cleaned_data['title'])
-#              email_body = "Link added to: http://%s%s admin: http://%s%s" % (
-#                  Site.objects.get_current().domain,
-#                  object.get_absolute_url(),
-#                  Site.objects.get_current().domain,
-#                  admin_url)
-#              mail_managers("New Link Added", email_body)
-#              return HttpResponseRedirect(success_url)
+#             object.links.create(status='S',
+#                                 url=form.cleaned_data['url'],
+#                                 title=form.cleaned_data['title'])
+#             email_body = "Link added to: http://%s%s admin: http://%s%s" % (
+#                 Site.objects.get_current().domain,
+#                 object.get_absolute_url(),
+#                 Site.objects.get_current().domain,
+#                 admin_url)
+#             mail_managers("New Link Added", email_body)
+#             return HttpResponseRedirect(success_url)
 #     else:
 #         form = form_class()
 #     return render_to_response(template_name,
