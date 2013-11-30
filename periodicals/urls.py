@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.conf.urls import patterns, url
 from .views import (AuthorList, AuthorDetail,
                     PeriodicalList, PeriodicalDetail,
-                    SeriesList, SeriesDetail)
+                    SeriesList, SeriesDetail,
+                    IssueDetail, ArticleDetail)
 
 
 urlpatterns = patterns('',
@@ -81,17 +82,17 @@ urlpatterns = patterns('',
                            name='periodicals_series_detail'
                            ),
 
-                       # # one periodical issue
-                       # url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/$',
-                       #     IssueDetail.as_view(),
-                       #     name='periodicals_issue_detail'
-                       #     ),
+                       # one periodical issue
+                       url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/$',
+                           IssueDetail.as_view(),
+                           name='periodicals_issue_detail'
+                           ),
 
-                       # # one article
-                       # url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<article_slug>[-\w]+)/$',
-                       #     'periodicals.views.article_detail',
-                       #     name='periodicals_article_detail'
-                       #     ),
+                       # one article
+                       url(r'^(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<article_slug>[-\w]+)/$',
+                           ArticleDetail.as_view(),
+                           name='periodicals_article_detail'
+                           ),
 
                        # list of periodicals - not in sitemap
                        url(r'',

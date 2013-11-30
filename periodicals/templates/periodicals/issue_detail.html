@@ -1,21 +1,18 @@
-{% extends "3column_with_menu.html" %}
+{% extends "periodicals/base.html" %}
 
-{% block title %}{{block.super}} - {{periodical.name}} - {{issue.display_name}} - {{issue.display_date}}{% endblock %}
+{% block title %}{{periodical.name}} - {{issue.display_name}} - {{issue.display_date}}{% endblock %}
 
-{% block meta %}
-{{block.super}}
-{% if issue.description %}
-<meta name="Description" content="{{issue.description}}">
-{% endif %}
-{% endblock %}
+{% block breacrumbs %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.display_name}}</div>
+{% endblock breacrumbs %}
 
 {% block content %}
-{% spaceless %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.display_name}}</div>
-<table width="100%" style="margin-top:10px"><tr>
-<td style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}</td>
-<td style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}</td>
-</tr></table>
+<table width="100%" style="margin-top:10px">
+  <tr>
+    <td style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}</td>
+    <td style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}</td>
+  </tr>  
+</table>
 
 <h1>{{periodical.name}} {{issue.display_date}}</h1>
 {% if issue.printed_cover or issue.digital_cover %}
@@ -29,7 +26,7 @@
 {% endif %}
 </div>
 {% endif %}
-<!-- google_ad_section_start -->
+
 <h2>Description</h2>
 <p>{{issue.description}}</p>
 {% if issue.read_online %}
@@ -47,16 +44,16 @@
 <a href="{{issue.buy_print}}">Buy a paper copy of this issue</a>
 </div>
 {% endif %}
-{% if object_list %}
+{% if issue.articles %}
 <h2>Articles</h2>
 <table class="article-table">
 <tr class="header"><th class="page-header">Page</th><th class="page-title">Title</th><th class="page-authors">Authors</th></tr>
-{% for article in object_list %}
+{% for article in issue.articles.all %}
 <tr class="{% cycle 'even' 'odd' %}"><td class="article-page-number">{% if article.page %}<a href="{{article.get_absolute_url}}">{{article.page}}</a>{% else %}&nbsp;{% endif %}</td><td><a href="{{article.get_absolute_url}}">{{article.series}}<br/>{{article.title}}</a></td><td>{% for author in article.authors.all %}<a href="{{author.get_absolute_url}}">{{author.display_name}}</a>&nbsp;{% endfor %}</td></tr>
 {% endfor %}
 </table>
 {% endif %}
-{% if not object_list %}
+{% if not issue.articles %}
 <h2>No Articles In Database</h2>
 {% endif %}
 <h2>Blog Posts, Web Pages, and Videos Referring to This Issue</h2>
@@ -65,15 +62,12 @@
 <tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
 {% endfor %}
 </table>
-<!-- google_ad_section_end -->
-<a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url periodicals_add_issue_link periodical_slug=periodical.slug, slug=issue.slug %}">Add a related blog/web page/video to this issue</a>
 
-{% load periodicals_tags %}
-<div class="copyright">{{periodical|periodical_copyright}}</div>
+{# <a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url 'periodicals_add_issue_link' periodical_slug=periodical.slug slug=issue.slug %}">Add a related blog/web page/video to this issue</a> #}
+
 <table width="100%" style="margin-top:10px"><tr>
 <td width="33%" style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}&nbsp;</td>
-<td style="text-align:center"><a  class="important-link" href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td>
+{# <td style="text-align:center"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td> #}
 <td width="33%" style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}&nbsp;</td>
 </tr></table>
-{% endspaceless %}
-{% endblock %}
+{% endblock content %}

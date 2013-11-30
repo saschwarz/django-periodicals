@@ -256,7 +256,6 @@ class Issue(models.Model):
                                   blank=True,
                                   help_text=_("URL to read online issue"))
     slug = models.SlugField(max_length=200,
-                            unique_for_month="pub_date",
                             help_text=_("Automatically generated when saved"),
                             blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -266,6 +265,7 @@ class Issue(models.Model):
     class Meta:
         verbose_name = _('issue')
         verbose_name_plural = _('issues')
+        unique_together = ("periodical", "volume", "issue", "slug")
         ordering = ('-pub_date',)
 
     def __unicode__(self):

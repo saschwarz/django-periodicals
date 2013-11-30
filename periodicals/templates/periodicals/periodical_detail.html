@@ -2,9 +2,11 @@
 
 {% block title %}{{block.super}} - Periodical - {{periodical.name}} {% endblock %}
 
-{% block content %}
+{% block breadcrumbs %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;{{periodical.name}}</div>
+{% endblock breadcrumbs %}
 
+{% block content %}
 {% if periodical.website or periodical.blog or periodical.logo %}
 <div style="float:right;text-align:center;">
 {% if periodical.logo %}

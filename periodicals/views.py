@@ -1,4 +1,4 @@
-from django.views.generic import ArchiveIndexView, DetailView, ListView
+from django.views.generic import ArchiveIndexView, DetailView, ListView, TemplateView
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.template import RequestContext
@@ -7,6 +7,7 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.core.mail import mail_managers
 from django.core import urlresolvers
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.sites.models import Site
 
 # from tagging.views import tagged_object_list
@@ -122,18 +123,6 @@ class PeriodicalDetail(ArchiveIndexView):
         context['periodical'] = periodical
         return context
 
-# def periodical_detail(request, slug):
-#     periodical = get_object_or_404(Periodical, slug=slug)
-#     series_query_set = Article.objects.filter(issue__periodical=periodical).order_by('series').values('series').distinct()[:10]
-#     return archive_index(request,
-#                          queryset=periodical.issue_set.order_by('pub_date'),
-#                          date_field='pub_date',
-#                          num_latest=None,
-#                          template_name='periodicals/periodical_detail.html',
-#                          extra_context={'periodical': periodical,
-#                                         'series_list': series_query_set},
-#                         allow_future=True)
-
 
 # def issue_year(request, periodical_slug, year):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)
@@ -152,26 +141,75 @@ class PeriodicalDetail(ArchiveIndexView):
 #                         make_object_list=True,
 #                         allow_future=True)
 
+class IssueDetail(TemplateView):
+    # issue_slug is only unique per month so can't use
+    # regular DetailView
+    template_name = 'periodicals/issue_detail.html'
 
-# def issue_detail(request, periodical_slug, slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     issue = get_object_or_404(Issue, slug=slug, periodical=periodical)
-#     next_month = Issue.objects.filter(periodical=periodical).filter(pub_date__gt=issue.pub_date).order_by('pub_date')
-#     if next_month:
-#         next_month = next_month[0]
-#     previous_month = Issue.objects.filter(periodical=periodical).filter(pub_date__lt=issue.pub_date).order_by('-pub_date')
-#     if previous_month:
-#         previous_month = previous_month[0]
-#     return object_list(request,
-#                        # Still querying for each author individually
-#                        queryset=Article.objects.filter(issue=issue).select_related().order_by('page'),
-#                        template_name='periodicals/issue_detail.html',
-#                        extra_context={'issue': issue,
-#                                       'periodical': periodical,
-#                                       'next_month': next_month,
-#                                       'previous_month': previous_month
-#                                       })
+    def get_context_data(self, **kwargs):
+        context = super(IssueDetail, self).get_context_data(**kwargs)
+        periodical_slug = kwargs['periodical_slug']
+        periodical = get_object_or_404(Periodical,
+                                       slug=periodical_slug)
+        issue = get_object_or_404(Issue,
+                                  periodical=periodical,
+                                  slug=kwargs['issue_slug'])
 
+        try:
+            next_month = Issue.objects.filter(periodical=periodical).\
+                filter(pub_date__gt=issue.pub_date).order_by('pub_date')[0:1].get()
+        except ObjectDoesNotExist:
+            next_month = None
+
+        try:
+            previous_month = Issue.objects.filter(periodical=periodical).\
+                filter(pub_date__lt=issue.pub_date).order_by('-pub_date')[0:1].get()
+        except ObjectDoesNotExist:
+            previous_month = None
+
+        context['issue'] = issue
+        context['periodical'] = periodical
+        context['previous_month'] = previous_month
+        context['next_month'] = next_month
+        return context
+
+
+class ArticleDetail(DetailView):
+    model = Article
+    context_object_name = 'article'
+    slug_url_kwarg = 'article_slug'
+    template_name = 'periodicals/article_detail.html'
+
+    def get_queryset(self):
+        periodical_slug = self.kwargs['periodical_slug']
+        self.periodical = get_object_or_404(Periodical,
+                                            slug=periodical_slug)
+        issue_slug = self.kwargs['issue_slug']
+        self.issue = get_object_or_404(Issue,
+                                       periodical=self.periodical,
+                                       slug=issue_slug)
+        return super(ArticleDetail, self).get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super(ArticleDetail, self).get_context_data(**kwargs)
+        article = context['article']
+        next_article = previous_article = None
+        if article.page:
+            try:
+                next_article = Article.objects.filter(issue=self.issue).filter(page__gt=article.page).order_by('page')[0:1].get()
+            except ObjectDoesNotExist:
+                next_article = None
+
+            try:
+                previous_article = Article.objects.filter(issue=self.issue).filter(page__lt=article.page).order_by('-page')[0:1].get()
+            except ObjectDoesNotExist:
+                previous_article = None
+
+        context['periodical'] = self.periodical
+        context['issue'] = self.issue
+        context['previous_article'] = previous_article
+        context['next_article'] = next_article
+        return context
 
 # def article_detail(request, periodical_slug, issue_slug, slug):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)

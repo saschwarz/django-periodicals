@@ -7,9 +7,10 @@ test_views
 
 Tests for `django-periodicals` view module.
 """
-
+from datetime import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from periodicals.models import Author, Periodical, Issue, Article
 
 
@@ -22,17 +23,35 @@ class TestSetup(TestCase):
         author.save()
         periodical = Periodical(name="Mad Magazine")
         periodical.save()
-        issue = Issue(periodical=periodical,
-                      volume=1,
-                      issue=10)
-        issue.save()
-        article = Article(issue=issue,
+        self.periodical = periodical
+        issue0 = Issue(periodical=periodical,
+                       volume=1,
+                       issue=9,
+                       pub_date=datetime.strptime('2011-09-01', '%Y-%m-%d')
+                       )
+        issue0.save()
+        self.issue0 = issue0
+        issue1 = Issue(periodical=periodical,
+                       volume=1,
+                       issue=10,
+                       pub_date=datetime.strptime('2011-10-01', '%Y-%m-%d')
+                       )
+        issue1.save()
+        self.issue1 = issue1
+        issue2 = Issue(periodical=periodical,
+                       volume=1,
+                       issue=11,
+                       pub_date=datetime.strptime('2011-11-01', '%Y-%m-%d')
+                       )
+        issue2.save()
+        self.issue2 = issue2
+        article = Article(issue=issue1,
                           series="Editorial",
                           title="What me worry?")
         article.save()
         article.authors.add(author)
 
-        article1 = Article(issue=issue,
+        article1 = Article(issue=issue1,
                            series="Humor",
                            title="Fun")
         article1.save()
@@ -101,3 +120,30 @@ class TestPeriodicalViews(TestSetup):
         self.assertEqual(1, periodical.id)
         issue_list = resp.context['date_list']
         self.assertEqual(1, len(issue_list))
+
+
+class TestIssueViews(TestSetup):
+
+    def test_issue_detail(self):
+        resp = self.client.get(reverse('periodicals_issue_detail',
+                                       kwargs={'periodical_slug': 'mad-magazine',
+                                               'issue_slug': '1-10'}))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/issue_detail.html')
+        issue = resp.context['issue']
+        self.assertEqual(self.issue1, issue)
+        periodical = resp.context['periodical']
+        self.assertEqual(self.periodical, periodical)
+        previous_month = resp.context['previous_month']
+        self.assertEqual(self.issue0, previous_month)
+        next_month = resp.context['next_month']
+        self.assertEqual(self.issue2, next_month)
+
+    def test_save_with_duplicate_volume_issue_on_same_date_gives_different_slug(self):
+        dup_issue1 = Issue(periodical=self.periodical,
+                           volume=1,
+                           issue=10,
+                           pub_date=datetime.strptime('2011-10-01', '%Y-%m-%d')
+                           )
+        self.assertRaises(IntegrityError, dup_issue1.save)
+        self.assertEqual(dup_issue1.slug, self.issue1.slug)
