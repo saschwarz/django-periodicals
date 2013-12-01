@@ -1,4 +1,5 @@
 {% extends "periodicals/base.html" %}
+{% load periodicals_tags %}
 
 {% block title %}{{block.super}} - Author - {{author.display_name}} {% endblock %}
 
@@ -26,7 +27,6 @@
 </table>
 {% endif %}
 <h2>Articles</h2>
-{% load periodicals_tags %}
 {% for article in object_list %}
 <p>{{article|article_result}}</p>
 {% endfor %}

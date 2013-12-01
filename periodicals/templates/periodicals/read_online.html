@@ -1,5 +1,6 @@
-{% extends "periodicals/base.html" %}
-{% load i18n %}
+{% extends "periodicals/periodical_base.html" %}
+{% load periodicals_tags %}
+
 {% block title %}{{block.super}} - Periodical - {{periodical.name}} - Issues and Articles Online{% endblock %}
 
 {% block breadcrumbs %}
@@ -24,7 +25,6 @@
 </div>
 <div style="float:right;width:325px;">
 <h2>Articles Free Online</h2>
-{% load periodicals_tags %}
 {% for article in articles %}
 <p>{{ article|article_result}}</p>
 {% endfor %}

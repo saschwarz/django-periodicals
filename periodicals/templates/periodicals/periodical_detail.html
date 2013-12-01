@@ -1,4 +1,4 @@
-{% extends "periodicals/base.html" %}
+{% extends "periodicals/periodical_base.html" %}
 
 {% block title %}{{block.super}} - Periodical - {{periodical.name}} {% endblock %}
 
@@ -43,19 +43,17 @@
   </ul>
 </div>
 <br style="clear:both;"/>
-{% comment %}
 <p>
   <a class="important-link" href="{% url 'periodicals_read_online' periodical.slug %}">Issues and Articles Available FREE Online</a>
 </p><p>
+{% comment %}
   <a class="important-link" href="{% url 'periodicals_links' periodical.slug %}">Issues/Articles with Online Blog Posts, Web Pages, Videos</a>
 </p>
 {% endcomment %}
 <h2>Years</h2>
 <p class="year-list">
   {% for year in date_list %}
-{% comment %}
   <a class="year-link" href="{% url 'periodicals_issue_year' periodical.slug year|date:"Y" %}" class="result-title">{{year|date:"Y"}}</a>&nbsp;
-{% endcomment %}
   {% endfor %}
 </p>
 <p class="related-links">

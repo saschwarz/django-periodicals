@@ -1,4 +1,5 @@
-{% extends "periodicals/base.html" %}
+{% extends "periodicals/periodical_base.html" %}
+{% load tagging_tags %}
 
 {% block title %}{{block.super}} - {{periodical.name}} - {{issue.display_year}} - {{issue.display_name}} - {{article.title}}{% endblock %}
 
@@ -73,7 +74,6 @@
 {% comment %}
 <div class="article_tags">
 <h2>Article Tags</h2>
-{% load tagging_tags %}
 <ul>
 {% tags_for_object article as tag_list %}
 {% for tag in tag_list %}
