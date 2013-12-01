@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import os
 from django.db import models
 from django.db.models import permalink
 from django.utils.translation import ugettext_lazy as _
@@ -56,9 +57,10 @@ class ActiveLinkManager(models.Manager):
 class LinkItem(models.Model):
     """
     LinkItem is a link to another article that refers to an Issue or Article.
-    Typically used when someone external to the publisher writes a blog post
+    Used when someone external to the publisher writes a blog post
     or other online article that refers to or expands upon the original
-    Issue or Article.
+    Issue or Article. The 'status' controls whether or not the link is
+    displayed on the web page.
     """
     STATUS_SUBMITTED = 'S'
     STATUS_ACTIVE = 'A'
@@ -92,12 +94,12 @@ class LinkItem(models.Model):
     def __unicode__(self):
         return self.title
 
-    @permalink
-    def get_absolute_url(self):
-        return ('periodicals_article_detail', (),
-                {'periodical_slug': self.issue.periodical.slug,
-                 'issue_slug': self.issue.slug,
-                 'link_slug': self.slug})
+    # @permalink
+    # def get_absolute_url(self):
+    #     return ('periodicals_article_detail', (),
+    #             {'periodical_slug': self.issue.periodical.slug,
+    #              'issue_slug': self.issue.slug,
+    #              'link_slug': self.slug})
 
 
 class Author(models.Model):
@@ -165,12 +167,14 @@ class Author(models.Model):
             return self.last_name  # no comma
 
 
-def logo_upload(instance, filename):
-    full_path = "%s/logo" % (instance.name.lower())
-    return full_path
-
-
 class Periodical(models.Model):
+
+    def logo_upload(self, filename):
+        filename, file_extension = os.path.splitext(filename)
+        name = self.name.lower().replace(' ', '')
+        full_path = "%s/logo%s" % (name, file_extension)
+        return full_path
+
     name = models.CharField(_("name"), max_length=100)
     publisher = models.CharField(_("publisher"), max_length=100, blank=True)
     address_1 = models.CharField(_("address_1"), max_length=100, blank=True)
@@ -209,24 +213,24 @@ class Periodical(models.Model):
         return _(settings.PERIODICALS_PERIODICAL_FORMAT) % _instanceFields(self)
 
 
-def issue_upload_to(instance, filename, suffix):
-    full_path = "%s/issues/%s-%s-%s" % (
-        instance.periodical.name.lower().replace(' ', ''),
-        instance.display_year(),
-        instance.display_month() or slugify(instance.title),
-        suffix)
-    return full_path
-
-
-def issue_upload_print(instance, filename):
-    return issue_upload_to(instance, filename, "print")
-
-
-def issue_upload_digital(instance, filename):
-    return issue_upload_to(instance, filename, "digital")
-
-
 class Issue(models.Model):
+
+    def issue_upload_to(self, filename, suffix):
+        filename, file_extension = os.path.splitext(filename)
+        full_path = "%s/issues/%s-%s-%s%s" % (
+            self.periodical.name.lower().replace(' ', ''),
+            self.display_year(),
+            self.display_month() or slugify(self.title),
+            suffix,
+            file_extension)
+        return full_path
+
+    def issue_upload_print(self, filename):
+        return self.issue_upload_to(filename, "print")
+
+    def issue_upload_digital(self, filename):
+        return self.issue_upload_to(filename, "digital")
+
     periodical = models.ForeignKey('Periodical')
     volume = models.PositiveIntegerField(_("volume"))
     issue = models.PositiveIntegerField(_("issue"))
@@ -312,13 +316,16 @@ class Issue(models.Model):
                 if link.status == LinkItem.STATUS_ACTIVE]
 
 
-def article_upload_image(instance, filename):
-    full_path = "%s/articles/%s" % (instance.issue.periodical.name.lower(),
-                                    instance.slug.lower())
-    return full_path
-
-
 class Article(models.Model):
+
+    def upload_image(self, filename):
+        filename, file_extension = os.path.splitext(filename)
+        periodical = self.issue.periodical.name.lower().replace(' ', '')
+        full_path = "%s/articles/%s%s" % (periodical,
+                                          self.slug.lower(),
+                                          file_extension)
+        return full_path
+
     series = models.CharField(_("series"),
                               max_length=100)
     title = models.CharField(_("title"),
@@ -330,7 +337,7 @@ class Article(models.Model):
                                        blank=True,
                                        null=True)
     tags = TagField()
-    image = models.ImageField(upload_to=article_upload_image,
+    image = models.ImageField(upload_to=upload_image,
                               blank=True,
                               max_length=200,
                               help_text=_("Upload image associated with article"))
@@ -360,7 +367,9 @@ class Article(models.Model):
         verbose_name_plural = _('articles')
 
     def __unicode__(self):
-        return " %s - %s" % (self.issue, self.title)
+        # may only have a series name and not a title
+        title = self.title
+        return unicode(self.issue) + (title and ' - ' + title or '')
 
     @permalink
     def get_absolute_url(self):

@@ -230,8 +230,10 @@ class ArticleDetail(DetailView):
 #     periodical = get_object_or_404(Periodical, slug=periodical_slug)
 #     issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
 #     article = get_object_or_404(Article, slug=slug, issue=issue)
-#     return add_link(request, article,
-#                     admin_url=urlresolvers.reverse('admin:periodicals_article_change', args=(article.id,)))
+#     return add_link(request, 
+#                     article,
+#                     admin_url=urlresolvers.reverse('admin:periodicals_article_change', 
+#                                                    args=(article.id,)))
 
 
 # def add_issue_link(request, periodical_slug, slug):

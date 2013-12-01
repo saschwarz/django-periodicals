@@ -1,5 +1,9 @@
 django>=1.5.1
 
 # Additional requirements go here
+PIL==1.1.7
+Whoosh==2.5.5
 django-autoslug==1.7.1
-django-tagging==0.3.1
+django-haystack==2.1.0
+-e git://github.com/nemith/django-tagging.git@f5ed41bc9de1b454d025ff49a800cd98affc1de1#egg=django_tagging-dev
+haystack==0.15
