@@ -9,8 +9,8 @@ from django.core.mail import mail_managers
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.sites.models import Site
+from tagging.views import TaggedObjectListView
 
-# from tagging.views import tagged_object_list
 # from recaptcha_utils.fields import ReCaptchaField
 from .models import Author, Periodical, Issue, Article, LinkItem
 
@@ -74,29 +74,23 @@ class SeriesDetail(ListView):
         return context
 
 
-# # when related_tags=True can't yet pass a QuerySet:
-# # http://code.google.com/p/django-tagging/issues/detail?id=179
+# when related_tags=True can't yet pass a QuerySet:
+# http://code.google.com/p/django-tagging/issues/detail?id=179
+class ArticleTags(TaggedObjectListView):
+    queryset=Article.objects.order_by('-issue__pub_date').select_related().all()
+    paginate_by=20
+
+
+# Costly since Issue and Periodical instances are loaded for each tagged Article
 # def tag_detail(request, tag):
 #     tag = tag.replace('-', ' ')
 #     return tagged_object_list(request,
-#                               queryset_or_model=Article.objects.order_by('-issue__pub_date').select_related().all(),
+#                               queryset_or_model=Article,
 #                               tag=tag,
 #                               template_name='periodicals/article_tag_detail.html',
-# #                              related_tags=True,
-# #                              related_tag_counts=True,
+#                               related_tags=True,
+#                               related_tag_counts=True,
 #                               paginate_by=20)
-
-
-# # Costly since Issue and Periodical instances are loaded for each tagged Article
-# # def tag_detail(request, tag):
-# #     tag = tag.replace('-', ' ')
-# #     return tagged_object_list(request,
-# #                               queryset_or_model=Article,
-# #                               tag=tag,
-# #                               template_name='periodicals/article_tag_detail.html',
-# #                               related_tags=True,
-# #                               related_tag_counts=True,
-# #                               paginate_by=20)
 
 
 class PeriodicalList(ListView):

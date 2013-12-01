@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.conf.urls import patterns, url
+from django.views.generic import TemplateView
 from .views import (AuthorList, AuthorDetail,
+                    ArticleDetail, ArticleTags,
+                    IssueYear, IssueDetail,
                     PeriodicalList, PeriodicalDetail,
-                    SeriesList, SeriesDetail,
-                    IssueYear, IssueDetail, ArticleDetail)
+                    SeriesList, SeriesDetail)
 
 
 urlpatterns = patterns('',
@@ -18,15 +20,15 @@ urlpatterns = patterns('',
                            name='periodicals_author_detail'
                            ),
 
-                       # url(r'^tags/$',
-                       #     TemplateView.as_view(template_name='periodicals/tags.html'),
-                       #     name='periodicals_tags',
-                       #     ),
+                       url(r'^tags/$',
+                           TemplateView.as_view(template_name='periodicals/tags.html'),
+                           name='periodicals_tags',
+                           ),
 
-                       # url(r'^tag/(?P<tag>[^/]+)/$',
-                       #     'periodicals.views.tag_detail',
-                       #     name='periodicals_article_tag_detail'
-                       #     ),
+                       url(r'^tag/(?P<tag>[^/]+)/$',
+                           ArticleTags.as_view(template_name='periodicals/article_tag_detail.html'),
+                           name='periodicals_article_tag_detail'
+                           ),
 
                        # # success for adding a link - don't include in sitemap
                        # url(r'^links/added/$',

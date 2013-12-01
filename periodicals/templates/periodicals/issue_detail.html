@@ -64,9 +64,11 @@
 </table>
 
 {# <a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url 'periodicals_add_issue_link' periodical_slug=periodical.slug slug=issue.slug %}">Add a related blog/web page/video to this issue</a> #}
-<table width="100%" style="margin-top:10px"><tr>
-<td width="33%" style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}&nbsp;</td>
-{# <td style="text-align:center"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td> #}
-<td width="33%" style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}&nbsp;</td>
-</tr></table>
+<table width="100%" style="margin-top:10px">  
+  <tr>
+    <td width="33%" style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}&nbsp;</td>
+    <td style="text-align:center"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td> #}
+    <td width="33%" style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}&nbsp;</td>
+  </tr>
+</table>
 {% endblock innercontent %}

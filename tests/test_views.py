@@ -327,3 +327,30 @@ class TestReadOnline(TestSetup):
         articles = resp.context['articles']
         self.assertEqual(1, len(articles))
         self.assertEqual(self.article1, articles[0])
+
+
+class TestTagViews(TestSetup):
+
+    def setUp(self):
+        super(TestTagViews, self).setUp()
+        self.article.tags = 'humor adult-content'
+        self.article.save()
+        self.article1.tags = 'humor'
+        self.article1.save()
+
+    def test_tags(self):
+        resp = self.client.get(reverse('periodicals_tags'))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/tags.html')
+        self.assertTemplateUsed(resp, 'periodicals/base.html')
+        self.assertTrue('adult-content' in resp.content)
+        self.assertTrue('humor' in resp.content)
+
+    def test_tag_detail(self):
+        resp = self.client.get(reverse('periodicals_article_tag_detail',
+                                       kwargs={'tag': 'adult-content'}))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/article_tag_detail.html')
+        self.assertTemplateUsed(resp, 'periodicals/base.html')
+        self.assertTrue('adult-content' in resp.content)
+        self.assertTrue('humor' in resp.content)
