@@ -81,18 +81,6 @@ class ArticleTags(TaggedObjectListView):
     paginate_by=20
 
 
-# Costly since Issue and Periodical instances are loaded for each tagged Article
-# def tag_detail(request, tag):
-#     tag = tag.replace('-', ' ')
-#     return tagged_object_list(request,
-#                               queryset_or_model=Article,
-#                               tag=tag,
-#                               template_name='periodicals/article_tag_detail.html',
-#                               related_tags=True,
-#                               related_tag_counts=True,
-#                               paginate_by=20)
-
-
 class PeriodicalList(ListView):
     model = Periodical
     template_name = 'periodicals/periodical_list.html'
@@ -218,76 +206,79 @@ def read_online(request, periodical_slug):
                               )
 
 
-# def add_article_link(request, periodical_slug, issue_slug, slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
-#     article = get_object_or_404(Article, slug=slug, issue=issue)
-#     return add_link(request, 
-#                     article,
-#                     admin_url=urlresolvers.reverse('admin:periodicals_article_change', 
-#                                                    args=(article.id,)))
+def add_article_link(request, periodical_slug, issue_slug, article_slug):
+    periodical = get_object_or_404(Periodical, slug=periodical_slug)
+    issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
+    article = get_object_or_404(Article, slug=article_slug, issue=issue)
+    try:
+        admin_url = urlresolvers.reverse('admin:periodicals_article_change', 
+                                                   args=(article.id,))
+    except urlresolvers.NoReverseMatch:
+        # admin not installed
+        admin_url = ""
+    return add_link(request, 
+                    article,
+                    admin_url=admin_url)
 
 
-# def add_issue_link(request, periodical_slug, slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     issue = get_object_or_404(Issue, slug=slug, periodical=periodical)
-#     return add_link(request,
-#                     issue,
-#                     admin_url=urlresolvers.reverse('admin:periodicals_issue_change', 
-#                                                    args=(issue.id,)))
+def add_issue_link(request, periodical_slug, issue_slug):
+    periodical = get_object_or_404(Periodical, slug=periodical_slug)
+    issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
+    try:
+        admin_url = urlresolvers.reverse('admin:periodicals_issue_change', 
+                                         args=(issue.id,))
+    except urlresolvers.NoReverseMatch:
+        # admin not installed
+        admin_url = ""
+    return add_link(request,
+                    issue,
+                    admin_url=admin_url)
 
 
-# def links(request, periodical_slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     # Load all the links and their related Issues/Article instances efficiently
-# #    article_type = ContentType.objects.get_for_model(Article)
-#     articles = Article.objects.filter(issue__periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-issue__pub_date')
-# #    issue_type = ContentType.objects.get_for_model(Issue)
-#     issues = Issue.objects.filter(periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-pub_date')
+def links(request, periodical_slug):
+    periodical = get_object_or_404(Periodical, slug=periodical_slug)
+    # Load all the links and their related Issues/Article instances efficiently
+    articles = Article.objects.filter(issue__periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-issue__pub_date')
+    issues = Issue.objects.filter(periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-pub_date')
 
-#     return render_to_response('periodicals/links.html',
-#                               {'articles': articles,
-#                                'issues': issues,
-#                                'periodical': periodical,
-#                                },
-#                               context_instance=RequestContext(request)
-#                               )
+    return render_to_response('periodicals/links.html',
+                              {'articles': articles,
+                               'issues': issues,
+                               'periodical': periodical,
+                               },
+                              context_instance=RequestContext(request)
+                              )
 
 
-# class LinkItemForm(forms.Form):
-#     title = forms.CharField()
-#     url = forms.URLField()
-# #     recaptcha = ReCaptchaField()
+class LinkItemForm(forms.Form):
+    title = forms.CharField()
+    url = forms.URLField()
+#     recaptcha = ReCaptchaField()
 
 
-# def add_link(request, object,
-#              form_class=LinkItemForm,
-#              template_name='periodicals/link_add.html',
-#              success_url='/periodicals/links/added/',
-#              admin_url=""):
-#     if request.method == 'POST':
-#         form = form_class(data=request.POST)
-#         if form.is_valid():
-#             object.links.create(status='S',
-#                                 url=form.cleaned_data['url'],
-#                                 title=form.cleaned_data['title'])
-#             email_body = "Link added to: http://%s%s admin: http://%s%s" % (
-#                 Site.objects.get_current().domain,
-#                 object.get_absolute_url(),
-#                 Site.objects.get_current().domain,
-#                 admin_url)
-#             mail_managers("New Link Added", email_body)
-#             return HttpResponseRedirect(success_url)
-#     else:
-#         form = form_class()
-#     return render_to_response(template_name,
-#                               {'form': form,
-#                                'object': object,
-#                                'object_class': object.__class__.__name__,
-#                                },
-#                               context_instance=RequestContext(request))
-
-
-# def add_link_success(request, template_name="periodicals/link_success.html"):
-#     return render_to_response(template_name,
-#                               context_instance=RequestContext(request))
+def add_link(request, object,
+             form_class=LinkItemForm,
+             template_name='periodicals/link_add.html',
+             success_url='/periodicals/links/added/',
+             admin_url=""):
+    if request.method == 'POST':
+        form = form_class(data=request.POST)
+        if form.is_valid():
+            object.links.create(status='S',
+                                url=form.cleaned_data['url'],
+                                title=form.cleaned_data['title'])
+            email_body = "Link added to: http://%s%s admin: http://%s%s" % (
+                Site.objects.get_current().domain,
+                object.get_absolute_url(),
+                Site.objects.get_current().domain,
+                admin_url)
+            mail_managers("New Link Added", email_body)
+            return HttpResponseRedirect(success_url)
+    else:
+        form = form_class()
+    return render_to_response(template_name,
+                              {'form': form,
+                               'object': object,
+                               'object_class': object.__class__.__name__,
+                               },
+                              context_instance=RequestContext(request))

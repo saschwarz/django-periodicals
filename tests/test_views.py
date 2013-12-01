@@ -7,6 +7,7 @@ test_views
 
 Tests for `django-periodicals` view module.
 """
+import urlparse
 from datetime import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -354,3 +355,56 @@ class TestTagViews(TestSetup):
         self.assertTemplateUsed(resp, 'periodicals/base.html')
         self.assertTrue('adult-content' in resp.content)
         self.assertTrue('humor' in resp.content)
+
+
+class TestLinkViews(TestSetup):
+
+    def setUp(self):
+        super(TestLinkViews, self).setUp()
+        self.article.links.create(status='A',
+                                  url="http://example.com/",
+                                  title="Example Site")
+        self.article.save()
+
+    def test_links(self):
+        links = self.article.active_links()
+        self.assertEqual(1, len(links))
+        resp = self.client.get(reverse('periodicals_links',
+                                       kwargs={'periodical_slug': self.periodical.slug}))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/links.html')
+        self.assertTemplateUsed(resp, 'periodicals/periodicals_base.html')
+        self.assertTemplateUsed(resp, 'periodicals/base.html')
+        self.assertEqual(self.article, resp.context['articles'][0])
+        self.assertEqual(0, len(resp.context['issues']))
+        self.assertEqual(self.periodical, resp.context['periodical'])
+        self.assertTrue(links[0].title in resp.content)
+        self.assertTrue(links[0].url in resp.content)
+
+    def test_add_issue_link(self):
+        resp = self.client.post(reverse('periodicals_add_issue_link',
+                                        kwargs={'periodical_slug': self.periodical.slug,
+                                                'issue_slug': self.issue0.slug}),
+                                {'title': 'link title',
+                                 'url': 'http://example.com'})
+        self.assertEqual(resp.status_code, 302)
+        # redirects to success page 
+        redirect_url = urlparse.urlsplit(resp['Location']).path
+        dest = reverse('periodicals_add_link_success')
+        self.assertTrue(redirect_url.endswith(dest))
+        self.assertTrue(2, len(self.issue0.links.all()))
+
+    def test_add_article_link(self):
+        resp = self.client.post(reverse('periodicals_add_article_link',
+                                        kwargs={'periodical_slug': self.periodical.slug,
+                                                'issue_slug': self.issue1.slug,
+                                                'article_slug': self.article.slug}),
+                                {'title': 'link title',
+                                 'url': 'http://example.com'})
+        self.assertEqual(resp.status_code, 302)
+        # redirects to success page 
+        redirect_url = urlparse.urlsplit(resp['Location']).path
+        dest = reverse('periodicals_add_link_success')
+        self.assertTrue(redirect_url.endswith(dest))
+        # did link get created?
+        self.assertTrue(2, len(self.article.links.all()))

@@ -46,10 +46,8 @@
 <p>
   <a class="important-link" href="{% url 'periodicals_read_online' periodical.slug %}">Issues and Articles Available FREE Online</a>
 </p><p>
-{% comment %}
   <a class="important-link" href="{% url 'periodicals_links' periodical.slug %}">Issues/Articles with Online Blog Posts, Web Pages, Videos</a>
 </p>
-{% endcomment %}
 <h2>Years</h2>
 <p class="year-list">
   {% for year in date_list %}
@@ -59,6 +57,6 @@
 <p class="related-links">
   <a class="all-authors" href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a>
   <a class="all-series" href="{% url 'periodicals_series_list' periodical.slug %}" class="result-title">Browse Series/Categories</a>
-{% comment %} <a class="all-tags" href="{% url 'periodicals_tags' %}" class="result-title">Browse Tags</a> {% endcomment %}
+  <a class="all-tags" href="{% url 'periodicals_tags' %}" class="result-title">Browse Tags</a>
 </p>
 {% endblock innercontent %}

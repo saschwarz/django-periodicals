@@ -30,29 +30,29 @@ urlpatterns = patterns('',
                            name='periodicals_article_tag_detail'
                            ),
 
-                       # # success for adding a link - don't include in sitemap
-                       # url(r'^links/added/$',
-                       #     'periodicals.views.add_link_success',
-                       #     name='periodicals_add_link_success'
-                       #     ),
+                       # success for adding a link - don't include in sitemap
+                       url(r'^links/added/$',
+                           TemplateView.as_view(template_name='periodicals/link_success.html'),
+                           name='periodicals_add_link_success'
+                           ),
 
-                       # # add a link to an article - don't include in sitemap
-                       # url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<link_slug>[-\w]+)/$',
-                       #     'periodicals.views.add_article_link',
-                       #     name='periodicals_add_article_link'
-                       #     ),
+                       # add a link to an article - don't include in sitemap
+                       url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/(?P<article_slug>[-\w]+)/$',
+                           'periodicals.views.add_article_link',
+                           name='periodicals_add_article_link'
+                           ),
 
-                       # # add a link to an issue - don't include in sitemap
-                       # url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<link_slug>[-\w]+)/$',
-                       #     'periodicals.views.add_issue_link',
-                       #     name='periodicals_add_issue_link'
-                       #     ),
+                       # add a link to an issue - don't include in sitemap
+                       url(r'^links/(?P<periodical_slug>[-\w]+)/(?P<issue_slug>[-\w]+)/$',
+                           'periodicals.views.add_issue_link',
+                           name='periodicals_add_issue_link'
+                           ),
 
-                       # # Page showing all periodical Issues and Articles with external links
-                       # url(r'^links/(?P<periodical_slug>[-\w]+)/$',
-                       #     'periodicals.views.links',
-                       #     name='periodicals_links'
-                       #     ),
+                       # Page showing all periodical Issues and Articles with external links
+                       url(r'^links/(?P<periodical_slug>[-\w]+)/$',
+                           'periodicals.views.links',
+                           name='periodicals_links'
+                           ),
 
                        # periodical detail including list of periodical's years
                        url(r'^(?P<periodical_slug>[-\w]+)/$',
