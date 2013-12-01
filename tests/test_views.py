@@ -21,27 +21,28 @@ class TestSetup(TestCase):
                         first_name='Alfred',
                         middle_name='E')
         author.save()
+        self.author = author
         periodical = Periodical(name="Mad Magazine")
         periodical.save()
         self.periodical = periodical
         issue0 = Issue(periodical=periodical,
                        volume=1,
                        issue=9,
-                       pub_date=datetime.strptime('2011-09-01', '%Y-%m-%d')
+                       pub_date=datetime(2011, 9, 1)
                        )
         issue0.save()
         self.issue0 = issue0
         issue1 = Issue(periodical=periodical,
                        volume=1,
                        issue=10,
-                       pub_date=datetime.strptime('2011-10-01', '%Y-%m-%d')
+                       pub_date=datetime(2011, 10, 1)
                        )
         issue1.save()
         self.issue1 = issue1
         issue2 = Issue(periodical=periodical,
                        volume=1,
                        issue=11,
-                       pub_date=datetime.strptime('2011-11-01', '%Y-%m-%d')
+                       pub_date=datetime(2011, 11, 1)
                        )
         issue2.save()
         self.issue2 = issue2
@@ -50,15 +51,16 @@ class TestSetup(TestCase):
                           title="What me worry?")
         article.save()
         article.authors.add(author)
-
+        self.article = article
         article1 = Article(issue=issue1,
                            series="Humor",
                            title="Fun")
         article1.save()
         article1.authors.add(author)
+        self.article1 = article1
 
 
-class TestAuthorView(TestSetup):
+class TestAuthorViews(TestSetup):
 
     def test_authors_list(self):
         resp = self.client.get(reverse('periodicals_authors_list'))
@@ -80,7 +82,7 @@ class TestAuthorView(TestSetup):
         self.assertEqual(2, len(article_list))
 
 
-class TestSeriesView(TestSetup):
+class TestSeriesViews(TestSetup):
 
     def test_series_list(self):
         resp = self.client.get(reverse('periodicals_series_list',
@@ -109,7 +111,7 @@ class TestSeriesView(TestSetup):
         self.assertTrue(isinstance(article_list[0], Article))
 
 
-class TestPeriodicalView(TestSetup):
+class TestPeriodicalViews(TestSetup):
 
     def test_periodical_detail(self):
         resp = self.client.get(reverse('periodicals_periodical_detail',
@@ -122,9 +124,34 @@ class TestPeriodicalView(TestSetup):
         self.assertEqual(1, len(issue_list))
 
 
-class TestIssueView(TestSetup):
+class TestIssueViews(TestSetup):
 
     def test_issue_detail(self):
+        periodical = Periodical(name="One Issue")
+        periodical.save()
+
+        single_issue = Issue(periodical=periodical,
+                             volume=2,
+                             issue=1,
+                             pub_date=datetime(2012, 1, 1)
+                             )
+        single_issue.save()
+        resp = self.client.get(
+            reverse('periodicals_issue_detail',
+                    kwargs={'periodical_slug': periodical.slug,
+                            'issue_slug': single_issue.slug}))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/issue_detail.html')
+        issue = resp.context['issue']
+        self.assertEqual(single_issue, issue)
+        periodical = resp.context['periodical']
+        self.assertEqual(periodical, periodical)
+        previous_month = resp.context['previous_month']
+        self.assertEqual(None, previous_month)
+        next_month = resp.context['next_month']
+        self.assertEqual(None, next_month)
+
+    def test_issue_detail_with_previous_and_next_issues(self):
         resp = self.client.get(reverse('periodicals_issue_detail',
                                        kwargs={'periodical_slug': 'mad-magazine',
                                                'issue_slug': '1-10'}))
@@ -173,10 +200,10 @@ class TestIssueYearView(TestSetup):
         periodical = Periodical(name="Crazy Cat")
         periodical.save()
         issue10 = Issue(periodical=periodical,
-                       volume=0,
-                       issue=10,
-                       pub_date=datetime.strptime('2010-01-01', '%Y-%m-%d')
-                       )
+                        volume=0,
+                        issue=10,
+                        pub_date=datetime.strptime('2010-01-01', '%Y-%m-%d')
+                        )
         issue10.save()
         issue0 = Issue(periodical=periodical,
                        volume=1,
@@ -211,3 +238,66 @@ class TestIssueYearView(TestSetup):
         previous_year = resp.context['previous_year']
         self.assertEqual('2010', previous_year.strftime('%Y'))
         
+
+class TestArticleDetailView(TestSetup):
+
+    def test_article_detail_one_article(self):
+        single_periodical = Periodical(name="One Issue")
+        single_periodical.save()
+
+        single_issue = Issue(periodical=single_periodical,
+                             volume=2,
+                             issue=1,
+                             pub_date=datetime(2012, 1, 1)
+                             )
+        single_issue.save()
+        article = Article(issue=single_issue,
+                          series="Humor",
+                          title="Fun Alone")
+        article.save()
+        article.authors.add(self.author)
+
+        resp = self.client.get(
+            reverse('periodicals_article_detail',
+                    kwargs={'periodical_slug': single_periodical.slug,
+                            'issue_slug': single_issue.slug,
+                            'article_slug': article.slug
+                            }))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/article_detail.html')
+        periodical = resp.context['periodical']
+        self.assertEqual(single_periodical, periodical)
+        issue = resp.context['issue']
+        self.assertEqual(single_issue, issue)
+        next_article = resp.context['next_article']
+        self.assertEqual(None, next_article)
+        previous_article = resp.context['previous_article']
+        self.assertEqual(None, previous_article)
+        
+    def test_article_detail_one_previous_and_one_next_article(self):
+        self.article1.page = 8
+        self.article1.save()
+        self.article.page = 10
+        self.article.save()
+        article2 = Article(issue=self.issue1,
+                           series="Humor",
+                           title="Fun 2",
+                           page=11)
+        article2.save()
+
+        resp = self.client.get(
+            reverse('periodicals_article_detail',
+                    kwargs={'periodical_slug': 'mad-magazine',
+                            'issue_slug': self.issue1.slug,
+                            'article_slug': self.article.slug
+                            }))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/article_detail.html')
+        periodical = resp.context['periodical']
+        self.assertEqual(self.periodical, periodical)
+        issue = resp.context['issue']
+        self.assertEqual(self.issue1, issue)
+        next_article = resp.context['next_article']
+        self.assertEqual(article2, next_article)
+        previous_article = resp.context['previous_article']
+        self.assertEqual(self.article1, previous_article)

@@ -63,7 +63,6 @@ class SeriesDetail(ListView):
         self.periodical = get_object_or_404(Periodical,
                                             slug=self.kwargs['periodical_slug'])
         self.series = self.kwargs['series']
-        return Article.objects.filter(series=self.series)
         return Article.objects.filter(issue__periodical=self.periodical).\
             filter(series=self.series).\
             select_related().order_by('-issue__pub_date')
@@ -157,7 +156,6 @@ class IssueDetail(TemplateView):
         issue = get_object_or_404(Issue,
                                   periodical=periodical,
                                   slug=kwargs['issue_slug'])
-
         try:
             next_month = Issue.objects.filter(periodical=periodical).\
                 filter(pub_date__gt=issue.pub_date).order_by('pub_date')[0:1].get()
@@ -199,15 +197,15 @@ class ArticleDetail(DetailView):
         next_article = previous_article = None
         if article.page:
             try:
-                next_article = Article.objects.filter(issue=self.issue).filter(page__gt=article.page).order_by('page')[0:1].get()
+                next_article = Article.objects.filter(issue=self.issue).\
+                    filter(page__gt=article.page).order_by('page')[0:1].get()
             except ObjectDoesNotExist:
                 next_article = None
-
             try:
-                previous_article = Article.objects.filter(issue=self.issue).filter(page__lt=article.page).order_by('-page')[0:1].get()
+                previous_article = Article.objects.filter(issue=self.issue).\
+                    filter(page__lt=article.page).order_by('-page')[0:1].get()
             except ObjectDoesNotExist:
                 previous_article = None
-
         context['periodical'] = self.periodical
         context['issue'] = self.issue
         context['previous_article'] = previous_article

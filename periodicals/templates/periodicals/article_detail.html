@@ -1,25 +1,20 @@
-{% extends "3column_with_menu.html" %}
+{% extends "periodicals/base.html" %}
 
 {% block title %}{{block.super}} - {{periodical.name}} - {{issue.display_year}} - {{issue.display_name}} - {{article.title}}{% endblock %}
 
-{% block meta %}
-{{block.super}}
-{% if article.description %}
-<meta name="Description" content="{{article.description}}">
-{% endif %}
-{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;<a href="{{issue.get_absolute_url}}">{{issue.display_name}}</a>{% if article.page %}&nbsp;>&nbsp;Page {{article.page}}{% endif %}</div>
+{% endblock breadcrumbs %}
 
 {% block content %}
-{% spaceless %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url periodicals_issue_year periodical.slug,issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;<a href="{{issue.get_absolute_url}}">{{issue.display_name}}</a>{% if article.page %}&nbsp;>&nbsp;Page {{article.page}}{% endif %}</div>
 <table width="100%" style="margin-top:10px"><tr>
 <td style="text-align:left">{% if previous_article %}<a class="important-link" href="{{previous_article.get_absolute_url}}" title="{{previous_article.series}}: {{previous_article.title}}">&lt; Previous Article</a>{% endif %}&nbsp;</td>
 <td style="text-align:right">{% if next_article %}<a class="important-link" href="{{next_article.get_absolute_url}}" title="{{next_article.series}}: {{next_article.title}}">Next Article &gt;</a>{% endif %}&nbsp;</td>
 </tr></table>
-<!-- google_ad_section_start -->
+
 <h1>Title: {{article.title}}</h1>
 {% if article.series %}
-<h2>Series/Category: <a href="{% url periodicals_series_detail periodical.slug,article.series|urlize %}">{{article.series}}</a></h2>
+<h2>Series/Category: <a href="{% url 'periodicals_series_detail' periodical.slug article.series|urlize %}">{{article.series}}</a></h2>
 {% endif %}
 {% if issue.printed_cover or issue.digital_cover %}
 <div class="article-image">
@@ -52,7 +47,7 @@
 {% endif %}
 {% if article.read_online %}
 <div class="article-read-online">
-<img src="http://data.agilitynerd.com/images/icons/Yellow_Red_Star_16x16.png" width="16" height="16" style="vertical-align:middle;"/>&nbsp;<a class="important-link" href="{{article.read_online}}">Read this article online</a>&nbsp;<img src="http://data.agilitynerd.com/images/icons/Yellow_Red_Star_16x16.png" style="vertical-align:middle;"/>
+<a class="important-link" href="{{article.read_online}}">Read this article online</a>
 </div>
 {% endif %}
 {% if article.buy_digital %}
@@ -75,17 +70,17 @@
 <a href="{{issue.buy_print}}">Buy a paper reprint of the issue containing this article</a>
 </div>
 {% endif %}
-
+{% comment %}
 <div class="article_tags">
 <h2>Article Tags</h2>
 {% load tagging_tags %}
 <ul>
 {% tags_for_object article as tag_list %}
 {% for tag in tag_list %}
-<li><a href="{% url periodicals_article_tag_detail tag.name|slugify %}">{{tag.name}}</a></li>
+<li><a href="{% url 'periodicals_article_tag_detail' tag.name|slugify %}">{{tag.name}}</a></li>
 {% endfor %}
 </ul>
-<a href="{% url periodicals_tags %}">All Article Tags</a>
+<a href="{% url 'periodicals_tags' %}">All Article Tags</a>
 </div>
 <br style="clear:both;"/>
 <h2>Blog Posts, Web Pages, and Videos Referring to This Article</h2>
@@ -94,14 +89,12 @@
 <tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
 {% endfor %}
 </table>
-<!-- google_ad_section_end -->
-<a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url periodicals_add_article_link periodical_slug=periodical.slug, issue_slug=issue.slug, slug=article.slug %}">Add a related blog/web page/video to this article</a>
-{% load periodicals_tags %}
-<div class="copyright">{{periodical|periodical_copyright}}</div>
+
+<a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url 'periodicals_add_article_link' periodical_slug=periodical.slug, issue_slug=issue.slug, slug=article.slug %}">Add a related blog/web page/video to this article</a>
+{% endcomment %}
 <table width="100%" style="margin-top:10px"><tr>
 <td width="33%" style="text-align:left">{% if previous_article %}<a class="important-link" href="{{previous_article.get_absolute_url}}" title="{{previous_article.series}}: {{previous_article.title}}">&lt; Previous Article</a>{% endif %}&nbsp;</td>
 <td style="text-align:center"><a class="important-link" href="{{issue.get_absolute_url}}">All {{issue.display_name}} Articles</a></td>
 <td width="33%" style="text-align:right">{% if next_article %}<a class="important-link" href="{{next_article.get_absolute_url}}" title="{{next_article.series}}: {{next_article.title}}">Next Article &gt;</a>{% endif %}&nbsp;</td>
 </tr></table>
-{% endspaceless %}
 {% endblock %}
