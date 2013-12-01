@@ -213,15 +213,15 @@ class ArticleDetail(DetailView):
         return context
 
 
-# def read_online(request, periodical_slug):
-#     periodical = get_object_or_404(Periodical, slug=periodical_slug)
-#     return render_to_response('periodicals/read_online.html',
-#                               {'articles' : Article.objects.exclude(read_online__exact='').select_related().order_by('-issue__pub_date'),
-#                                'issues': Issue.objects.exclude(read_online__exact='').select_related().order_by('-pub_date'),
-#                                'periodical': periodical,
-#                                },
-#                               context_instance=RequestContext(request)
-#                               )
+def read_online(request, periodical_slug):
+    periodical = get_object_or_404(Periodical, slug=periodical_slug)
+    return render_to_response('periodicals/read_online.html',
+                              {'articles' : Article.objects.exclude(read_online__exact='').select_related().order_by('-issue__pub_date'),
+                               'issues': Issue.objects.exclude(read_online__exact='').select_related().order_by('-pub_date'),
+                               'periodical': periodical,
+                               },
+                              context_instance=RequestContext(request)
+                              )
 
 
 # def add_article_link(request, periodical_slug, issue_slug, slug):

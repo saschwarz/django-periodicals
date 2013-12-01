@@ -58,11 +58,11 @@ urlpatterns = patterns('',
                            name='periodicals_periodical_detail'
                            ),
 
-                       # # list of periodical's issues and articles viewable online
-                       # url(r'^(?P<periodical_slug>[-\w]+)/online/$',
-                       #     'periodicals.views.read_online',
-                       #     name='periodicals_read_online'
-                       #     ),
+                       # list of periodical's issues and articles viewable online
+                       url(r'^(?P<periodical_slug>[-\w]+)/online/$',
+                           'periodicals.views.read_online',
+                           name='periodicals_read_online'
+                           ),
 
                        # list of periodical's issues for a year - not in sitemap
                        url(r'^(?P<periodical_slug>[-\w]+)/(?P<year>\d{4})/$',

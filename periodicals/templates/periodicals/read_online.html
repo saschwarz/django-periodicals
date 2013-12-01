@@ -1,17 +1,12 @@
-{% extends "3column_with_menu.html" %}
+{% extends "periodicals/base.html" %}
 {% load i18n %}
 {% block title %}{{block.super}} - Periodical - {{periodical.name}} - Issues and Articles Online{% endblock %}
 
-{% block meta %}
-{{block.super}}
-<meta name="Description" content="{% trans "View all issues and articles that are available free online." %}">
-{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles Online</div>
+{% endblock breadcrumbs%}
 
 {% block content %}
-{% spaceless %}
-<!-- google_ad_section_start -->
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles Online</div>
-
 <h1>{{periodical.name}} Issues and Articles Free Online</h1>
 <div style="float:left">
 <h2>Issues Free Online</h2>
@@ -34,9 +29,4 @@
 <p>{{ article|article_result}}</p>
 {% endfor %}
 </div>
-<br style="clear:both"/>
-{% load periodicals_tags %}
-<div class="copyright">{{periodical|periodical_copyright}}</div>
-<!-- google_ad_section_end -->
-{% endspaceless %}
-{% endblock %}
+{% endblock content%}

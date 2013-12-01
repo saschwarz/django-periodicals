@@ -301,3 +301,27 @@ class TestArticleDetailView(TestSetup):
         self.assertEqual(article2, next_article)
         previous_article = resp.context['previous_article']
         self.assertEqual(self.article1, previous_article)
+
+
+class TestReadOnline(TestSetup):
+
+    def test_read_online(self):
+        self.issue1.read_online = 'a url'
+        self.issue1.save()
+        self.article1.read_online = 'a url'
+        self.article1.save()
+
+        resp = self.client.get(
+            reverse('periodicals_read_online',
+                    kwargs={'periodical_slug': self.periodical.slug,
+                            }))
+        self.assertEqual(200, resp.status_code)
+        self.assertTemplateUsed(resp, 'periodicals/read_online.html')
+        periodical = resp.context['periodical']
+        self.assertEqual(self.periodical, periodical)
+        issues = resp.context['issues']
+        self.assertEqual(1, len(issues))
+        self.assertEqual(self.issue1, issues[0])
+        articles = resp.context['articles']
+        self.assertEqual(1, len(articles))
+        self.assertEqual(self.article1, articles[0])

@@ -25,14 +25,14 @@ def article_result(article, autoescape=None):
 
     result += '''<div class="result-issue-info">%s %s %s''' % (
         esc(article.issue.periodical.name),
-        esc(article.issue.get_year_display()),
-        esc(article.issue.get_name_display()))
+        esc(article.issue.display_year()),
+        esc(article.issue.display_name()))
 
     if article.page:
         result += " %s: %s" % (_("Page"),
                                esc(article.page))
     result += '</div>'
-    authors = [esc(author.get_name_display()) for author in article.authors.all()]
+    authors = [esc(author.display_name()) for author in article.authors.all()]
     if authors:
         result += '''<div class="result-author">%s: %s</div>''' % (
             len(authors) > 1 and _("Authors") or _("Author"),
