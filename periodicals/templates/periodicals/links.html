@@ -7,7 +7,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles With Related Online Articles/Videos</div>
 {% endblock breadcrumbs %}
 
-{% block content %}
+{% block innercontent %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles With Related Online Articles/Videos</div>
 
 <h1>{{periodical.name}} Issues and Articles With Related Online Articles and Videos</h1>
@@ -46,4 +46,4 @@ These issues and articles have web articles, videos, and/or blog posts associate
 {% endfor %}
 </div>
 <br style="clear:both"/>
-{% endblock %}
+{% endblock innercontent %}

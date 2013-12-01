@@ -1,4 +1,4 @@
-{% extends "periodicals/periodical_base.html" %}
+{% extends "periodicals/periodicals_base.html" %}
 {% load periodicals_tags %}
 
 {% block title %}{{block.super}} - Periodicals {% endblock %}
@@ -7,7 +7,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;Periodicals</div>
 {% endblock breadcrumbs %}
 
-{% block content %}
+{% block innercontent %}
 <h1>Periodicals</h1>
 <form action="{% url 'haystack_search' %}" method="get" style="text-align:center">
   <div class="fieldWrapper"><input type="text" id="id_q" name="q" size="51"/><input type="submit" value="Search {% article_count %} Articles"/><br/>
@@ -21,4 +21,4 @@
 </p>
 <h2 style="text-align:center">Article Tags</h2>
 {% include "periodicals/tag_cloud.html" %}
-{% endblock content %}
+{% endblock innercontent %}

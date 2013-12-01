@@ -2,7 +2,7 @@
 
 {% block title %}{{block.super}} - Periodical Search{% endblock %}
 
-{% block content %}
+{% block innercontent %}
 {% spaceless %}
     <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;Periodical Search</div>
     <h1>Periodical Search</h1>
@@ -40,4 +40,4 @@
         {% endif %}
     {% endif %}
 {% endspaceless %}
-{% endblock %}
+{% endblock innercontent %}

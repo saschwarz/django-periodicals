@@ -3,7 +3,7 @@
 
 {% block title %}{{block.super}} - Articles Tagged: {{tag.name}} {% endblock %}
 
-{% block content %}
+{% block innercontent %}
 {% spaceless %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;<a href="{% url periodicals_tags %}">All Article Tags</a>&nbsp;>&nbsp;Tag: {{tag.name}}</div>
 {% if related_tags %}
@@ -35,4 +35,4 @@
     </span>
 </div>
 {% endspaceless %}
-{% endblock %}
+{% endblock innercontent %}

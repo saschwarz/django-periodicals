@@ -89,6 +89,8 @@ class TestSeriesViews(TestSetup):
                                        kwargs={'periodical_slug': 'mad-magazine'}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/series_list.html')
+        self.assertTemplateUsed(resp, 'periodicals/periodicals_base.html')
+        self.assertTemplateUsed(resp, 'periodicals/base.html')
         series = resp.context['series_list']
         self.assertEqual(2, len(series))
         self.assertEqual('Editorial', series[0]['series'])

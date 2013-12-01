@@ -1,4 +1,4 @@
-{% extends "periodicals/periodical_base.html" %}
+{% extends "periodicals/periodicals_base.html" %}
 {% load periodicals_tags %}
 
 {% block title %}{{block.super}} - Periodical - {{periodical.name}} - Issues and Articles Online{% endblock %}
@@ -7,7 +7,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles Online</div>
 {% endblock breadcrumbs%}
 
-{% block content %}
+{% block innercontent %}
 <h1>{{periodical.name}} Issues and Articles Free Online</h1>
 <div style="float:left">
 <h2>Issues Free Online</h2>
@@ -29,4 +29,4 @@
 <p>{{ article|article_result}}</p>
 {% endfor %}
 </div>
-{% endblock content%}
+{% endblock innercontent %}

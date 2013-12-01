@@ -1,4 +1,4 @@
-{% extends "periodicals/periodical_base.html" %}
+{% extends "periodicals/periodicals_base.html" %}
 
 {% block title %}{{ block.super }} - {{periodical.name}} - Issues for {{year}} {% endblock %}
 
@@ -7,7 +7,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a> > {{year|date:"Y"}}</div>
 {% endblock breadcrumbs %}
 
-{% block content %}
+{% block innercontent %}
 {% with next=next_year|date:"Y" previous=previous_year|date:"Y" %}
 <table width="100%" style="margin-top:10px">
   <tr>
@@ -44,4 +44,4 @@
   </tr>
 </table>
 {% endwith %}
-{% endblock content %}
+{% endblock innercontent %}

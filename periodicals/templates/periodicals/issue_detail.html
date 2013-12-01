@@ -1,4 +1,4 @@
-{% extends "periodicals/periodical_base.html" %}
+{% extends "periodicals/periodicals_base.html" %}
 
 {% block title %}{{periodical.name}} - {{issue.display_name}} - {{issue.display_date}}{% endblock %}
 
@@ -6,7 +6,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.display_name}}</div>
 {% endblock breacrumbs %}
 
-{% block content %}
+{% block innercontent %}
 <table width="100%" style="margin-top:10px">
   <tr>
     <td style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}</td>
@@ -69,4 +69,4 @@
 {# <td style="text-align:center"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td> #}
 <td width="33%" style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}&nbsp;</td>
 </tr></table>
-{% endblock content %}
+{% endblock innercontent %}

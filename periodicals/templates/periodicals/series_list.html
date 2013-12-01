@@ -1,4 +1,4 @@
-{% extends "periodicals/periodical_base.html" %}
+{% extends "periodicals/periodicals_base.html" %}
 
 {% block title %}{{block.super}} - {{periodical.name}} - All Article Series{% endblock %}
 
@@ -6,7 +6,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;All Article Series</div>
 {% endblock breadcrumbs %}
 
-{% block content %}
+{% block innercontent %}
 <h1>All Article Series</h1>
 <table class="series-list-table">
   <thead>
@@ -19,4 +19,4 @@
     {% endfor %}
   </tbody>
 </table>
-{% endblock %}
+{% endblock innercontent%}
