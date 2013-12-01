@@ -7,6 +7,7 @@ test_views
 
 Tests for `django-periodicals` view module.
 """
+import os
 import urlparse
 from datetime import datetime
 from django.test import TestCase
@@ -14,6 +15,7 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from periodicals.models import Author, Periodical, Issue, Article
 
+os.environ['RECAPTCHA_TESTING'] = 'True'
 
 class TestSetup(TestCase):
 
@@ -386,7 +388,8 @@ class TestLinkViews(TestSetup):
                                         kwargs={'periodical_slug': self.periodical.slug,
                                                 'issue_slug': self.issue0.slug}),
                                 {'title': 'link title',
-                                 'url': 'http://example.com'})
+                                 'url': 'http://example.com',
+                                 'recaptcha_response_field': "PASSED"})
         self.assertEqual(resp.status_code, 302)
         # redirects to success page 
         redirect_url = urlparse.urlsplit(resp['Location']).path
@@ -400,7 +403,8 @@ class TestLinkViews(TestSetup):
                                                 'issue_slug': self.issue1.slug,
                                                 'article_slug': self.article.slug}),
                                 {'title': 'link title',
-                                 'url': 'http://example.com'})
+                                 'url': 'http://example.com',
+                                 'recaptcha_response_field': "PASSED"})
         self.assertEqual(resp.status_code, 302)
         # redirects to success page 
         redirect_url = urlparse.urlsplit(resp['Location']).path

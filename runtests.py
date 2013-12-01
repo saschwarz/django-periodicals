@@ -18,9 +18,12 @@ try:
             "django.contrib.contenttypes",
             "django.contrib.sites",
             "tagging",
+            "captcha",
             "periodicals",
         ],
         SITE_ID=1,
+        RECAPTCHA_PUBLIC_KEY='public',
+        RECAPTCHA_PRIVATE_KEY='private',
         NOSE_ARGS=['-s'],
     )
 

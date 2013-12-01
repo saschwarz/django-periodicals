@@ -9,9 +9,10 @@ from django.core.mail import mail_managers
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.sites.models import Site
-from tagging.views import TaggedObjectListView
 
-# from recaptcha_utils.fields import ReCaptchaField
+from tagging.views import TaggedObjectListView
+from captcha.fields import ReCaptchaField
+
 from .models import Author, Periodical, Issue, Article, LinkItem
 
 
@@ -253,7 +254,7 @@ def links(request, periodical_slug):
 class LinkItemForm(forms.Form):
     title = forms.CharField()
     url = forms.URLField()
-#     recaptcha = ReCaptchaField()
+    recaptcha = ReCaptchaField()
 
 
 def add_link(request, object,
