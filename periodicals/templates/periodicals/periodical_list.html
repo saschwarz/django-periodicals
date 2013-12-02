@@ -1,13 +1,13 @@
 {% extends "periodicals/base.html" %}
 {% load periodicals_tags %}
 
-{% block title %}{{block.super}} - Periodicals {% endblock %}
+{% block title %}{{block.super}} Periodicals {% endblock %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;Periodicals</div>
 {% endblock breadcrumbs %}
 
-{% block innercontent %}
+{% block innercontent %}{% spaceless %}
 <h1>Periodicals</h1>
 {% comment %}
 <form action="{% url 'haystack_search' %}" method="get">
@@ -22,4 +22,4 @@
 <p><a href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a></p>
 <h2>Article Tags</h2>
 {% include "periodicals/tag_cloud.html" %}
-{% endblock innercontent %}
+{% endspaceless %}{% endblock innercontent %}

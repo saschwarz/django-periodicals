@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.shortcuts import get_object_or_404, render_to_response
 from django import forms
 from django.http import HttpResponseRedirect
+from django.conf import settings
 from django.core.mail import mail_managers
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
@@ -16,13 +17,18 @@ from captcha.fields import ReCaptchaField
 from .models import Author, Periodical, Issue, Article, LinkItem
 
 
+try:
+    settings.PERIODICALS_PAGINATION
+except AttributeError:
+    settings.PERIODICALS_PAGINATION = 20
+
 class AuthorList(ListView):
     model = Author
     context_object_name = 'author_list'
     queryset = Author.objects.annotate(Count('articles')).\
         order_by("last_name", "first_name")
     template_name = 'periodicals/author_list.html'
-
+    paginate_by = settings.PERIODICALS_PAGINATION
 
 class AuthorDetail(DetailView):
     model = Author
@@ -42,6 +48,7 @@ class SeriesList(ListView):
     model = Article
     context_object_name = 'series_list'
     template_name = 'periodicals/series_list.html'
+    paginate_by = settings.PERIODICALS_PAGINATION
 
     def get_queryset(self):
         self.periodical = get_object_or_404(Periodical,
@@ -78,8 +85,8 @@ class SeriesDetail(ListView):
 # when related_tags=True can't yet pass a QuerySet:
 # http://code.google.com/p/django-tagging/issues/detail?id=179
 class ArticleTags(TaggedObjectListView):
-    queryset=Article.objects.order_by('-issue__pub_date').select_related().all()
-    paginate_by=20
+    queryset = Article.objects.order_by('-issue__pub_date').select_related().all()
+    paginate_by = settings.PERIODICALS_PAGINATION
 
 
 class PeriodicalList(ListView):
@@ -90,6 +97,7 @@ class PeriodicalList(ListView):
 class PeriodicalDetail(ArchiveIndexView):
     model = Issue
     date_field = 'pub_date'
+    allow_empty = True
     allow_future = True
     template_name = 'periodicals/periodical_detail.html'
     slug_url_kwarg = 'periodical_slug'

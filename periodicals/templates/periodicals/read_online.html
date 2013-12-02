@@ -8,9 +8,9 @@
 {% endblock breadcrumbs%}
 
 {% block innercontent %}
-<h1>{{periodical.name}} Issues and Articles Free Online</h1>
-<div style="float:left">
-<h2>Issues Free Online</h2>
+<h1>{{periodical.name}} Issues and Articles Available Online</h1>
+<div class="issues-online">
+<h2>Issues Available Online</h2>
 {% for issue in issues %}
 <p><a href="{{issue.get_absolute_url}}" class="result-title">{{issue.display_year}} {{issue.display_name}}
 {% if issue.printed_cover %}
@@ -23,8 +23,8 @@
 </a></p>
 {% endfor %}
 </div>
-<div style="float:right;width:325px;">
-<h2>Articles Free Online</h2>
+<div class="articles-online">
+<h2>Articles Available Online</h2>
 {% for article in articles %}
 <p>{{ article|article_result}}</p>
 {% endfor %}

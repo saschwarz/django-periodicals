@@ -1,33 +1,31 @@
 {% extends "periodicals/periodicals_base.html" %}
 
-{% block title %}{{block.super}} - Periodical - {{periodical.name}} {% endblock %}
+{% block title %}{{block.super}} Periodical {{periodical.name}} {% endblock %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;{{periodical.name}}</div>
 {% endblock breadcrumbs %}
 
-{% block innercontent %}
-{% if periodical.website or periodical.blog or periodical.logo %}
-<div style="float:right;text-align:center;">
+{% block innercontent %}{% spaceless %}
 {% if periodical.logo %}
-<img src="{{MEDIA_URL}}{{periodical.logo}}" style="margin-bottom:10px;"/><br/>
-{% endif %}
+<div class="periodical-logo">
+<img src="{{MEDIA_URL}}{{periodical.logo}}"/><br/>
 </div>
 {% endif %}
-<h1>{{periodical.name}}</h1>
-<div style="float:left;">
+<h1 class="periodical-name">{{periodical.name}}</h1>
+<div class="periodical-details">
   {% if periodical.publisher %}
-  <p>
+  <p class="periodical-address">
     {{periodical.publisher}}<br/>
     {{periodical.address_1}}<br/>
     {% if periodical.address_2 %}
-    {{periodical.address_1}}<br/>
+    {{periodical.address_2}}<br/>
     {% endif %}
     {{periodical.city}}, {{periodical.state}} {{periodical.zipcode}}<br/>
     {{periodical.country}}
   </p>
   {% endif %}
-  <ul>
+  <ul class="periodical-contacts">
     {% if periodical.phone %}
     <li>Phone: {{periodical.phone}}</li>
     {% endif %}
@@ -42,21 +40,21 @@
     {% endif %}
   </ul>
 </div>
-<br style="clear:both;"/>
-<p>
-  <a class="important-link" href="{% url 'periodicals_read_online' periodical.slug %}">Issues and Articles Available FREE Online</a>
-</p><p>
-  <a class="important-link" href="{% url 'periodicals_links' periodical.slug %}">Issues/Articles with Online Blog Posts, Web Pages, Videos</a>
+<p class="periodical-online">
+  <a class="important-link" href="{% url 'periodicals_read_online' periodical.slug %}">Issues and Articles Available Online</a>
+</p><p class="periodical-links">
+  <a class="important-link" href="{% url 'periodicals_links' periodical.slug %}">Issues/Articles with Related Online Blog Posts, Web Pages, Videos</a>
 </p>
-<h2>Years</h2>
-<p class="year-list">
+<h2 class="periodical-years">Years</h2>
+<p class="periodical-year-list">
   {% for year in date_list %}
-  <a class="year-link" href="{% url 'periodicals_issue_year' periodical.slug year|date:"Y" %}" class="result-title">{{year|date:"Y"}}</a>&nbsp;
+  <a class="periodical-year-link" href="{% url 'periodicals_issue_year' periodical.slug year|date:"Y" %}" class="result-title">{{year|date:"Y"}}</a>&nbsp;
   {% endfor %}
 </p>
-<p class="related-links">
-  <a class="all-authors" href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a>
-  <a class="all-series" href="{% url 'periodicals_series_list' periodical.slug %}" class="result-title">Browse Series/Categories</a>
-  <a class="all-tags" href="{% url 'periodicals_tags' %}" class="result-title">Browse Tags</a>
-</p>
-{% endblock innercontent %}
+<h2 class="periodical-browse">Browse</h2>
+<ul class="related-links">
+  <li><a class="all-authors" href="{% url 'periodicals_authors_list' %}">Browse Authors</a></li>
+  <li><a class="all-series" href="{% url 'periodicals_series_list' periodical.slug %}">Browse Series/Categories</a></li>
+  <li><a class="all-tags" href="{% url 'periodicals_tags' %}" class="result-title">Browse Tags</a></li>
+</ul>
+{% endspaceless %}{% endblock innercontent %}

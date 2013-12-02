@@ -53,7 +53,6 @@ def periodical_copyright(periodical, autoescape=None):
         esc = conditional_escape
     else:
         esc = lambda x: x
-
     text = _('Titles, descriptions and images are copyright %(publisher)s and are used with permission.')
     result = text % (dict(publisher='''<a href="%s">%s</a>''' % (
                 esc(periodical.website),

@@ -7,40 +7,38 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles With Related Online Articles/Videos</div>
 {% endblock breadcrumbs %}
 
-{% block innercontent %}
+{% block innercontent %}{% spaceless %}
 <h1>{{periodical.name}} Issues and Articles With Related Online Articles and Videos</h1>
 <p>
 These issues and articles have web articles, videos, and/or blog posts associated with them. Click the related links at the bottom of each Issue/Article below.
-<p>
+</p>
 <div id="issues">
 <h2>Issues</h2>
 {% for issue in issues %}
 <p><a href="{{issue.get_absolute_url}}" class="result-title">{{issue.display_year}} {{issue.display_name}}
 {% if issue.printed_cover %}
-<div class="issue-image"><img src="{{MEDIA_URL}}{{issue.printed_cover}}"/></div>
+    <div class="issue-image"><img src="{{MEDIA_URL}}{{issue.printed_cover}}"/></div>
 {% else %}
 {% if issue.digital_cover %}
-<div class="issue-image"><img src="{{MEDIA_URL}}{{issue.digital_cover}}"/></div>
+    <div class="issue-image"><img src="{{MEDIA_URL}}{{issue.digital_cover}}"/></div>
 {% endif %}
 {% endif %}
 </a>
-<div class="link-title">Related Links:</div>
-{% for link in issue.active_links %}
-<div class="link"><a href="{{link.url}}">{{link.title}}</a></div>
+  <div class="link-title">Related Links:</div>
+  {% for link in issue.active_links %}
+  <div class="link"><a href="{{link.url}}">{{link.title}}</a></div>
 {% endfor %}
 </p>
 {% endfor %}
 </div>
-
 <div id="articles">
 <h2>Articles</h2>
 {% for article in articles %}
-<div class="result">{{ article|article_result}}
+<div class="result">{{ article|article_result}}</div>
 <div class="link-title">Related Links:</div>
 {% for link in article.active_links %}
 <div class="link"><a href="{{link.url}}">{{link.title}}</a></div>
 {% endfor %}
-</div>
 {% endfor %}
 </div>
-{% endblock innercontent %}
+{% endspaceless %}{% endblock innercontent %}
