@@ -1,7 +1,12 @@
-{% block title}{% endblock title}
-
+<html>
+<head>
+  <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
 {% block content %}
 {% block breadcrumbs %}{% endblock breadcrumbs %}
 {% block innercontent %}{% endblock innercontent %}
 {% block copyright %}{% endblock copyright %}
 {% endblock content %}
+</body>
+</html>

@@ -1,4 +1,4 @@
-{% extends "periodicals/periodicals_base.html" %}
+{% extends "periodicals/base.html" %}
 {% load periodicals_tags %}
 
 {% block title %}{{block.super}} - Periodicals {% endblock %}
@@ -9,16 +9,17 @@
 
 {% block innercontent %}
 <h1>Periodicals</h1>
-<form action="{% url 'haystack_search' %}" method="get" style="text-align:center">
+{% comment %}
+<form action="{% url 'haystack_search' %}" method="get">
   <div class="fieldWrapper"><input type="text" id="id_q" name="q" size="51"/><input type="submit" value="Search {% article_count %} Articles"/><br/>
   </div>
 </form>
-<p style="text-align:center">
+{% endcomment %}
 {% for periodical in periodical_list %}
-<span style="padding-right:10px"><a href="{{periodical.get_absolute_url}}" class="result-title">Browse {{periodical.name}}</a></span>
+<p style="padding-right:10px"><a href="{{periodical.get_absolute_url}}" class="result-title">Browse {{periodical.name}}</a></p>
 {% endfor %}
-<span><a href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a></span>
-</p>
-<h2 style="text-align:center">Article Tags</h2>
+<h2>Authors</h2>
+<p><a href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a></p>
+<h2>Article Tags</h2>
 {% include "periodicals/tag_cloud.html" %}
 {% endblock innercontent %}
