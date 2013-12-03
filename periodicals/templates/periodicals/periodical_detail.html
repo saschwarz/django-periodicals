@@ -6,7 +6,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;{{periodical.name}}</div>
 {% endblock breadcrumbs %}
 
-{% block innercontent %}{% spaceless %}
+{% block innercontent %}
 {% if periodical.logo %}
 <div class="periodical-logo">
 <img src="{{MEDIA_URL}}{{periodical.logo}}"/><br/>
@@ -57,4 +57,4 @@
   <li><a class="all-series" href="{% url 'periodicals_series_list' periodical.slug %}">Browse Series/Categories</a></li>
   <li><a class="all-tags" href="{% url 'periodicals_tags' %}" class="result-title">Browse Tags</a></li>
 </ul>
-{% endspaceless %}{% endblock innercontent %}
+{% endblock innercontent %}

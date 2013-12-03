@@ -7,7 +7,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;Periodicals</div>
 {% endblock breadcrumbs %}
 
-{% block innercontent %}{% spaceless %}
+{% block innercontent %}
 <h1>Periodicals</h1>
 <form action="{% url 'haystack_search' %}" method="get">
   <div class="fieldWrapper"><input type="text" id="id_q" name="q" size="51"/><input type="submit" value="Search {% article_count %} Articles"/><br/>
@@ -20,4 +20,4 @@
 <p><a href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a></p>
 <h2>Article Tags</h2>
 {% include "periodicals/tag_cloud.html" %}
-{% endspaceless %}{% endblock innercontent %}
+{% endblock innercontent %}

@@ -413,8 +413,17 @@ class TestLinkViews(TestSetup):
         # did link get created?
         self.assertTrue(2, len(self.article.links.all()))
 
-class TestSearch(TestCase):
+class TestSearch(TestSetup):
 
     def test_search_get(self):
         resp = self.client.get(reverse('haystack_search'))
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual('', resp.context['query'])
+
+    def test_search_query(self):
+        self.article.description = 'having some fun now'
+        self.article.save()
+        resp = self.client.get(reverse('haystack_search'),
+                               {'q': 'having'})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual('having', resp.context['query'])

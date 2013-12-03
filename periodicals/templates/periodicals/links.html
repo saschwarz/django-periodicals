@@ -7,7 +7,7 @@
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles With Related Online Articles/Videos</div>
 {% endblock breadcrumbs %}
 
-{% block innercontent %}{% spaceless %}
+{% block innercontent %}
 <h1>{{periodical.name}} Issues and Articles With Related Online Articles and Videos</h1>
 <p>
 These issues and articles have web articles, videos, and/or blog posts associated with them. Click the related links at the bottom of each Issue/Article below.
@@ -41,4 +41,4 @@ These issues and articles have web articles, videos, and/or blog posts associate
 {% endfor %}
 {% endfor %}
 </div>
-{% endspaceless %}{% endblock innercontent %}
+{% endblock innercontent %}
