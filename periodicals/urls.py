@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
+from haystack.views import SearchView
+from haystack.query import SearchQuerySet
 from .views import (AuthorList, AuthorDetail,
                     ArticleDetail, ArticleTags,
                     IssueYear, IssueDetail,
@@ -8,7 +10,17 @@ from .views import (AuthorList, AuthorDetail,
                     SeriesList, SeriesDetail)
 
 
+# query results with most recent publication date first
+sqs = SearchQuerySet().order_by('-pub_date')
+
 urlpatterns = patterns('',
+                       url(r'^search/',
+                           SearchView(load_all=False,
+                                      template="periodicals/search.html",
+                                      searchqueryset=sqs,
+                                      ),
+                           name='haystack_search',
+                           ),
                        # not in sitemap
                        url(r'^authors/$',
                            AuthorList.as_view(),
@@ -102,26 +114,5 @@ urlpatterns = patterns('',
                            name='periodicals_list'
                            ),
                        )
-
-
-# Haystack search support is optional
-
-from haystack.views import SearchView
-from haystack.query import SearchQuerySet
-
-# query results with most recent publication date first
-sqs = SearchQuerySet().order_by('-pub_date')
-
-urlpatterns += patterns('', 
-                        # not in sitemap
-#                        url(r'^search/', include('haystack.urls')),
-                        url(r'^search/',
-                            SearchView(load_all=False,
-                                       template="periodicals/search.html",
-                                       searchqueryset=sqs,
-                                       ),
-                            name='haystack_search',
-                            )
-                        )
 
 admin.autodiscover()

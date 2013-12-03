@@ -1,0 +1,35 @@
+{% extends "3column_with_menu.html" %}
+
+{% block title %}{{block.super}} - Periodical Search{% endblock %}
+
+{% block content %}
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url periodicals_list %}">Periodicals</a>&nbsp;>&nbsp;Periodical Search</div>
+<div class="center" style="margin-top:20px;">
+{% include "cse/multi_search.html" %}
+</div>
+{% if query %}
+  {% if page.object_list %}
+<div style="text-align:right"><font size="-1">Results <b>{{page.start_index}}</b> - <b>{{page.end_index}}</b> for <b>{{query}}</b></font></div>
+<div style="border-top:1px solid #CCCCCC">
+  {% for result in page.object_list %}
+  {{result.result_text|safe}}
+  {% endfor %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if page.has_previous %}
+      <a href="?q={{query}}&page={{ page.previous_page_number }}">previous</a>
+      {% endif %}
+      <span class="current">
+        Page {{ page.number }} of {{ page.paginator.num_pages }}
+      </span>
+      {% if page.has_next %}
+      <a href="?q={{query}}&page={{ page.next_page_number }}">next</a>
+      {% endif %}
+    </span>
+  </div>
+</div>
+  {% else %}
+<h2>No matching articles found.</h2>
+  {% endif %}
+{% endif %}
+{% endblock %}

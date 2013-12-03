@@ -1,0 +1,16 @@
+{{object.title}}
+{{object.title}}
+
+{{object.series}}
+
+{% for author in object.authors.all %}
+{{author.get_name_display}}
+{% endfor %}
+
+{{object.description}}
+
+{% load tagging_tags %}
+{% tags_for_object object as tag_list %}
+{% for tag in tag_list %}
+{{tag.name}}
+{% endfor %}

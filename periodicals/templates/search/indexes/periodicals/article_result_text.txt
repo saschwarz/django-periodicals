@@ -1,0 +1,2 @@
+{% load periodicals_tags %}
+{{object|article_result}}
