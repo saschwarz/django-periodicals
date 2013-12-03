@@ -67,7 +67,7 @@
 <table width="100%" style="margin-top:10px">  
   <tr>
     <td width="33%" style="text-align:left">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}&nbsp;</td>
-    <td style="text-align:center"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td> #}
+    <td style="text-align:center"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></td>
     <td width="33%" style="text-align:right">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}&nbsp;</td>
   </tr>
 </table>

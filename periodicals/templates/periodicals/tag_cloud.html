@@ -4,6 +4,6 @@
 <div class="tag-cloud">
 {% tag_cloud_for_model periodicals.Article as tags with steps=6 min_count=1 distribution=log %}
 {% for tag in tags %}
-<span class="tag-{{tag.font_size|add:"2"}}"><a href="{% url 'periodicals_article_tag_detail' tag.name|slugify %}">{tag.name|spacify}}</a></span>
+<span class="tag-{{tag.font_size|add:"2"}}"><a href="{% url 'periodicals_article_tag_detail' tag.name|slugify %}">{{tag.name|spacify}}</a></span>
 {% endfor %}
 </div>

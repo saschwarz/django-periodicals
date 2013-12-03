@@ -412,3 +412,9 @@ class TestLinkViews(TestSetup):
         self.assertTrue(redirect_url.endswith(dest))
         # did link get created?
         self.assertTrue(2, len(self.article.links.all()))
+
+class TestSearch(TestCase):
+
+    def test_search_get(self):
+        resp = self.client.get(reverse('haystack_search'))
+        self.assertEqual(resp.status_code, 200)

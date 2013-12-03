@@ -1,3 +1,4 @@
+import os
 import sys
 from optparse import OptionParser
 
@@ -17,6 +18,7 @@ try:
             "django.contrib.auth",
             "django.contrib.contenttypes",
             "django.contrib.sites",
+            "haystack",
             "tagging",
             "captcha",
             "periodicals",
@@ -24,6 +26,16 @@ try:
         SITE_ID=1,
         RECAPTCHA_PUBLIC_KEY='public',
         RECAPTCHA_PRIVATE_KEY='private',
+        HAYSTACK_CONNECTIONS = {
+            'default': {
+                'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+                'PATH': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test_whoosh_periodicals_index'),
+                'STORAGE': 'file',
+                'POST_LIMIT': 128 * 1024 * 1024,
+                'INCLUDE_SPELLING': True,
+                'BATCH_SIZE': 100,
+                },
+            },
         NOSE_ARGS=['-s'],
     )
 
