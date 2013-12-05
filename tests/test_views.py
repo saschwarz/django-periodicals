@@ -12,6 +12,7 @@ import urlparse
 from datetime import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.core import management
 from django.db import IntegrityError
 from periodicals.models import Author, Periodical, Issue, Article
 
@@ -427,3 +428,30 @@ class TestSearch(TestSetup):
                                {'q': 'having'})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual('having', resp.context['query'])
+
+    def test_search_returns_single_results(self):
+        self.article.description = 'having some fun now'
+        self.article.save()
+        self.article1.description = 'some fun now'
+        self.article1.save()
+        management.call_command('rebuild_index', interactive=False, verbosity=0)
+        resp = self.client.get(reverse('haystack_search'),
+                               {'q': 'having'})
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'periodicals/search.html')
+        self.assertEqual(1, len(resp.context['page'].object_list))
+        self.assertEqual(self.article.id, int(resp.context['page'].object_list[0].pk))
+
+    def test_search_returns_multiple_results(self):
+        self.article.description = 'having some fun now'
+        self.article.save()
+        self.article1.description = 'some fun now'
+        self.article1.save()
+        management.call_command('rebuild_index', interactive=False, verbosity=0)
+        resp = self.client.get(reverse('haystack_search'),
+                               {'q': 'some fun'})
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'periodicals/search.html')
+        self.assertEqual(2, len(resp.context['page'].object_list))
+        self.assertEqual(set([self.article.id, self.article1.id]), 
+                         set([int(x.pk) for x in resp.context['page'].object_list]))
