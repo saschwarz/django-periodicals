@@ -2,7 +2,9 @@ django>=1.5.1
 PIL==1.1.7
 django-autoslug==1.7.1
 django-haystack==2.1.0
-django-recaptcha==0.0.6
+#django-recaptcha==0.0.6
+# version that supports django 1.6+
+-e git://github.com/saschwarz/django-recaptcha.git#egg=django-recaptcha
 # makes obsolete django-tagging work with Django 1.5
 -e git://github.com/nemith/django-tagging.git@dev-django1.5#egg=django_tagging-dev
 
