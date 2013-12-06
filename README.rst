@@ -36,7 +36,7 @@ Install two packages manually to get newer versions than are currently in `PyPi 
 
   $ pip install -e git://github.com/nemith/django-tagging.git@dev-django1.5#egg=django_tagging-dev
 
-Install a search backend for use by `Haystack <http://haystacksearch.org/>`_. To play around just install Whoosh:
+Install a search backend for use by `Haystack <http://haystacksearch.org/>`_. To start install Whoosh:
 
 .. code-block :: bash
 
@@ -72,7 +72,7 @@ Configure your Haystack backend:
         },
     }
 
-Configure your reCAPTCHA keys:
+Configure your reCAPTCHA keys - only used when users add links to Articles or Issues:
 
 .. code-block :: python
 
