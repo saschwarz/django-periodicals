@@ -44,7 +44,7 @@
 <p class="periodical-online">
   <a class="important-link" href="{% url 'periodicals_read_online' periodical.slug %}">Issues and Articles Available Online</a>
 {% endblock obj_online %}
-{% block obj_links %}
+{% block links %}
 </p><p class="periodical-links">
   <a class="important-link" href="{% url 'periodicals_links' periodical.slug %}">Issues/Articles with Related Online Blog Posts, Web Pages, Videos</a>
 </p>
@@ -58,7 +58,7 @@
   {% endfor %}
 </p>
 </div>
-{% endblock list %}
+{% endblock obj_list %}
 {% block obj_browse %}
 <div class="periodical-browse">
 <h2>Browse</h2>
