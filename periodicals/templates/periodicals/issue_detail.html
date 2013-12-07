@@ -2,9 +2,9 @@
 
 {% block title %}{{periodical.name}} - {{issue.display_name}} - {{issue.display_date}}{% endblock %}
 
-{% block breacrumbs %}
+{% block breadcrumbs %}
 <div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.display_name}}</div>
-{% endblock breacrumbs %}
+{% endblock breadcrumbs %}
 
 {% block innercontent %}
 <table width="100%" style="margin-top:10px">
