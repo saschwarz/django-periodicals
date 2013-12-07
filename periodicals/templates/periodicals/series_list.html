@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       {% for series in series_list %}
-      <tr><td><a href="{% url 'periodicals_series_detail' periodical.slug series.series|urlencode %}">{{series.series}}</a></td>
+      <tr><td><a href="{% url 'periodicals_series_detail' periodical.slug series.series %}">{{series.series}}</a></td>
         <td>{{series.series_count}}</td></tr>
       {% endfor %}
     </tbody>

@@ -365,6 +365,7 @@ class Article(models.Model):
     class Meta:
         verbose_name = _('article')
         verbose_name_plural = _('articles')
+        ordering = ['issue', 'page', ]
 
     def __unicode__(self):
         # may only have a series name and not a title
