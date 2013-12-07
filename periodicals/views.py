@@ -30,17 +30,23 @@ class AuthorList(ListView):
     template_name = 'periodicals/author_list.html'
     paginate_by = settings.PERIODICALS_PAGINATION
 
-class AuthorDetail(DetailView):
-    model = Author
-    context_object_name = 'author'
+class AuthorDetail(ListView):
+    model = Article
+    context_object_name = 'article_list'
     slug_url_kwarg = 'author_slug'
     template_name = 'periodicals/author_detail.html'
+    paginate_by = settings.PERIODICALS_PAGINATION
+
+    def get_queryset(self):
+        self.author = get_object_or_404(Author,
+                                        slug=self.kwargs['author_slug'])
+
+        return Article.objects.filter(authors__in=(self.author.id,)).\
+            select_related().order_by('-issue__pub_date')
 
     def get_context_data(self, **kwargs):
         context = super(AuthorDetail, self).get_context_data(**kwargs)
-        author = context['author']
-        context['article_list'] = author.articles.all().\
-            select_related().order_by('-issue__pub_date')
+        context['author'] = self.author
         return context
 
 

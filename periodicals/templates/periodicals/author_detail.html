@@ -8,26 +8,41 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
-<h1>Author: {{author.display_name}}</h1>
-{% if author.website or author.email or author.blog or author.alt_website %}
-<h2>Contact Information</h2>
-<table class="author-detail-table" border="0" cellspacing="0" cellpadding="0" width="100%">
-{% if author.email %}
-<tr><td><b>Email:</b></td><td>{{author.email}}</td><td></td></tr>
-{% endif %}
-{% if author.website %}
-<tr><td><b>Website:</b></td><td><a class="important-link" href="{{author.website}}">{{author.website}}</a></td><td><td></tr>
-{% endif %}
-{% if author.blog %}
-<tr><td><b>Blog:</b></td><td><a class="important-link" href="{{author.blog}}">{{author.blog}}</a></td><td></td></tr>
-{% endif %}
-{% if author.alt_website  %}
-<tr><td colspan="2"><a class="important-link" href="{{author.alt_website}}">Additional web page for this author</a></td><td></td></tr>
-{% endif %}
-</table>
-{% endif %}
-<h2>Articles</h2>
-{% for article in article_list %}
-<p>{{article|article_result}}</p>
-{% endfor %}
+{% block obj_detail %}
+<div class="author-details">
+  <h1>Author: {{author.display_name}}</h1>
+  {% if author.website or author.email or author.blog or author.alt_website %}
+  <h2>Contact Information</h2>
+  <table class="author-detail-table" border="0" cellspacing="0" cellpadding="0" width="100%">
+    {% if author.email %}
+    <tr><td><b>Email:</b></td><td>{{author.email}}</td><td></td></tr>
+    {% endif %}
+    {% if author.website %}
+    <tr><td><b>Website:</b></td><td><a class="important-link" href="{{author.website}}">{{author.website}}</a></td><td><td></tr>
+    {% endif %}
+    {% if author.blog %}
+    <tr><td><b>Blog:</b></td><td><a class="important-link" href="{{author.blog}}">{{author.blog}}</a></td><td></td></tr>
+    {% endif %}
+    {% if author.alt_website  %}
+    <tr><td colspan="2"><a class="important-link" href="{{author.alt_website}}">Additional web page for this author</a></td><td></td></tr>
+    {% endif %}
+  </table>
+  {% endif %}
+  {% endblock obj_detail %}
+</div>
+{% block obj_list %}
+<div class="article-list">
+  <h2>Articles</h2>
+  {% for article in article_list %}
+  <p>{{article|article_result}}</p>
+  {% endfor %}
+</div>
+{% endblock obj_list %}
+{% block pagination %}
+<ul class="pager">
+  <li class="previous"> {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">previous</a>{% endif %}</li>
+  <li class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+  <li class="next">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">next</a>{% endif %}</li>
+</ul>
+{% endblock pagination %}
 {% endblock innercontent %}
