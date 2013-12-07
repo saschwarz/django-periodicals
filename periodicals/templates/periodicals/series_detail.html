@@ -1,4 +1,4 @@
-{% extends "periodicals/periodicals_base.html" %}
+{% extends "periodicals/base_periodical.html" %}
 {% load periodicals_tags %}
 
 {% block title %}{{block.super}} - {{periodical.name}} - Series: {{series}}{% endblock %}
@@ -8,9 +8,20 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
-<h1>Series: {{series}}</h1>
-<h2>Articles</h2>
-{% for article in article_list %}
-<p>{{article | article_result}}</p>
-{% endfor %}
+{% block obj_list %}
+<div class="series-list">
+  <h1>Series: {{series}}</h1>
+  <h2>Articles</h2>
+  {% for article in article_list %}
+  <p>{{article | article_result}}</p>
+  {% endfor %}
+</div>
+{% endblock obj_list %}
+{% block pagination %}
+<ul class="pager">
+    <li class="previous">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">previous</a>{% endif %}</li>
+    <li class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+    <li class="next">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">next</a>{% endif %}</li>
+</ul>
+{% endblock pagination %}
 {% endblock innercontent %}

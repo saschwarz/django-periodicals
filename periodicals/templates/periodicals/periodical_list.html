@@ -1,4 +1,4 @@
-{% extends "periodicals/base.html" %}
+{% extends "periodicals/base_periodicals.html" %}
 {% load periodicals_tags %}
 
 {% block title %}{{block.super}} Periodicals {% endblock %}
@@ -8,16 +8,21 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
-<h1>Periodicals</h1>
-<form action="{% url 'haystack_search' %}" method="get">
-  <div class="fieldWrapper"><input type="text" id="id_q" name="q" size="51"/><input type="submit" value="Search {% article_count %} Articles"/><br/>
-  </div>
-</form>
-{% for periodical in periodical_list %}
-<p style="padding-right:10px"><a href="{{periodical.get_absolute_url}}" class="result-title">Browse {{periodical.name}}</a></p>
-{% endfor %}
-<h2>Authors</h2>
-<p><a href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a></p>
-<h2>Article Tags</h2>
-{% include "periodicals/tag_cloud.html" %}
+{% block periodicalsearch %}{{block.super}}{% endblock periodicalsearch %}
+<div class="periodicals">
+  <h2>Periodicals</h2>
+  <ul>
+    {% for periodical in periodical_list %}
+    <li><a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+<div class="periodicals-authors">
+  <h2>Authors</h2>
+  <p><a href="{% url 'periodicals_authors_list' %}" class="result-title">Browse Authors</a></p>
+</div>
+<div class="periodicals-tags">
+  <h2>Article Tags</h2>
+  {% include "periodicals/tag_cloud.html" %}
+</div>
 {% endblock innercontent %}

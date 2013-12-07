@@ -1,0 +1,11 @@
+{% extends "periodicals/base_periodicals.html" %}
+{% load periodicals_tags %}
+
+{% comment %}
+Override/define blocks relevant when a periodical exists in the request context 
+{% endcomment %}
+
+{% block copyright %}
+<div class="copyright">{{periodical|periodical_copyright}}</div>
+{% endblock copyright %}
+

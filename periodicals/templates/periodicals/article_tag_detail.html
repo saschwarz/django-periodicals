@@ -8,32 +8,31 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
+{% block obj_links %}
 {% if related_tags %}
-<div class="related_tags" style="float:right">
-<h2>Related Tags:</h2>
-<ul>
-{% for related in related_tags %}
-<li><a href="{% url 'periodicals_article_tag_detail' related.name %}">{{related.name}} ({{related.count}})</a></li>
-{% endfor %}
-</ul>
-<a href="{% url 'periodicals_tags' %}">All Article Tags</a>
+<div class="related_tags">
+  <h2>Related Tags:</h2>
+  <ul>
+    {% for related in related_tags %}
+    <li><a href="{% url 'periodicals_article_tag_detail' related.name %}">{{related.name}} ({{related.count}})</a></li>
+    {% endfor %}
+  </ul>
 </div>
 {% endif %}
-<h1>Articles Tagged: {{tag.name}}</h1>
-{% for article in object_list %}
-<p>{{ article|article_result}}</p>
-{% endfor %}
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?q={{article.get_absolute_url}}&page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </span>
-        {% if page_obj.has_next %}
-            <a href="?q={{article.get_absolute_url}}&page={{ page_obj.next_page_number }}">next</a>
-        {% endif %}
-    </span>
+{% endblock obj_links %}
+{% block obj_list %}
+<div class="article-tag-list">
+  <h1>Articles Tagged: {{tag.name}}</h1>
+  {% for article in object_list %}
+  <p class="article-detail">{{ article|article_result}}</p>
+  {% endfor %}
 </div>
+{% endblock obj_list %}
+{% block pagination %}
+<ul class="pager">
+    <li class="previous">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">previous</a>{% endif %}</li>
+    <li class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+    <li class="next">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">next</a>{% endif %}</li>
+</ul>
+{% endblock pagination %}
 {% endblock innercontent %}

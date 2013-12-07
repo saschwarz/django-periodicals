@@ -66,6 +66,7 @@ class SeriesDetail(ListView):
     model = Article
     context_object_name = 'article_list'
     template_name = 'periodicals/series_detail.html'
+    paginate_by = settings.PERIODICALS_PAGINATION
 
     def get_queryset(self):
         self.periodical = get_object_or_404(Periodical,

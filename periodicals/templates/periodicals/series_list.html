@@ -1,4 +1,4 @@
-{% extends "periodicals/periodicals_base.html" %}
+{% extends "periodicals/base_periodical.html" %}
 
 {% block title %}{{block.super}} - {{periodical.name}} - All Article Series{% endblock %}
 
@@ -7,27 +7,27 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
-<h1>All Article Series</h1>
-<table class="series-list-table">
-  <thead>
-    <tr><th>Series Name</th><th>Number of Articles</th></tr>
-  </thead>
-  <tbody>
-    {% for series in series_list %}
-    <tr><td><a href="{% url 'periodicals_series_detail' periodical.slug series.series|urlencode %}">{{series.series}}</a></td>
-      <td>{{series.series_count}}</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?q={% url 'periodicals_series_list' %}&page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-            <a href="?q={% url 'periodicals_series_list' %}&page={{ page_obj.next_page_number }}">next</a>
-        {% endif %}
-    </span>
+{% block obj_list %}
+<div class="obj_list">
+  <h1>All Article Series</h1>
+  <table class="series-list table table-bordered table-striped">
+    <thead>
+      <tr><th>Series Name</th><th>Number of Articles</th></tr>
+    </thead>
+    <tbody>
+      {% for series in series_list %}
+      <tr><td><a href="{% url 'periodicals_series_detail' periodical.slug series.series|urlencode %}">{{series.series}}</a></td>
+        <td>{{series.series_count}}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+{% endblock obj_list %}
+{% block pagination %}
+<ul class="pager">
+    <li class="previous">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">previous</a>{% endif %}</li>
+    <li class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+    <li class="next">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">next</a>{% endif %}</li>
+</ul>
+{% endblock pagination %}
 {% endblock innercontent%}

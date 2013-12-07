@@ -7,8 +7,10 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
+{% block obj_list %}
+<div class="authors">
 <h1>All Authors</h1>
-<table class="author-list-table">
+<table class="author-list table table-bordered table-striped">
   <thead>
     <tr><th>Last Name</th><th>First Name</th><th>Articles</th></tr>
   </thead>
@@ -20,15 +22,13 @@
     {% endfor %}
   </tbody>
 </table>
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?q={{author.get_absolute_url}}&page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-            <a href="?q={{author.get_absolute_url}}&page={{ page_obj.next_page_number }}">next</a>
-        {% endif %}
-    </span>
 </div>
+{% endblock obj_list %}
+{% block pagination %}
+<ul class="pager">
+  <li class="previous"> {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">previous</a>{% endif %}</li>
+  <li class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</li>
+  <li class="next">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">next</a>{% endif %}</li>
+</ul>
+{% endblock pagination %}
 {% endblock innercontent %}

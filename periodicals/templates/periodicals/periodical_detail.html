@@ -1,4 +1,4 @@
-{% extends "periodicals/periodicals_base.html" %}
+{% extends "periodicals/base_periodical.html" %}
 
 {% block title %}{{block.super}} Periodical {{periodical.name}} {% endblock %}
 
@@ -7,22 +7,21 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
+{% block obj_detail %}
 {% if periodical.logo %}
 <div class="periodical-logo">
-<img src="{{MEDIA_URL}}{{periodical.logo}}"/><br/>
+  <img src="{{MEDIA_URL}}{{periodical.logo}}"/><br/>
 </div>
 {% endif %}
-<h1 class="periodical-name">{{periodical.name}}</h1>
 <div class="periodical-details">
+  <h1 class="periodical-name">{{periodical.name}}</h1>
   {% if periodical.publisher %}
   <p class="periodical-address">
     {{periodical.publisher}}<br/>
-    {{periodical.address_1}}<br/>
-    {% if periodical.address_2 %}
-    {{periodical.address_2}}<br/>
-    {% endif %}
-    {{periodical.city}}, {{periodical.state}} {{periodical.zipcode}}<br/>
-    {{periodical.country}}
+    {% if periodical.address_1 %}{{periodical.address_1}}<br/>{% endif %}
+    {% if periodical.address_2 %}{{periodical.address_2}}<br/>{% endif %}
+    {% if periodical.city %}}{{periodical.city}}, {% endif %}{{periodical.state}} {{periodical.zipcode}}<br/>
+    {% if periodical.country %}{{periodical.country}}{% endif %}
   </p>
   {% endif %}
   <ul class="periodical-contacts">
@@ -40,21 +39,34 @@
     {% endif %}
   </ul>
 </div>
+{% endblock obj_detail %}
+{% block obj_online %}
 <p class="periodical-online">
   <a class="important-link" href="{% url 'periodicals_read_online' periodical.slug %}">Issues and Articles Available Online</a>
+{% endblock obj_online %}
+{% block obj_links %}
 </p><p class="periodical-links">
   <a class="important-link" href="{% url 'periodicals_links' periodical.slug %}">Issues/Articles with Related Online Blog Posts, Web Pages, Videos</a>
 </p>
-<h2 class="periodical-years">Years</h2>
+{% endblock links %}
+{% block obj_list %}
+<div class="periodical-years">
+<h2>Years</h2>
 <p class="periodical-year-list">
   {% for year in date_list %}
   <a class="periodical-year-link" href="{% url 'periodicals_issue_year' periodical.slug year|date:"Y" %}" class="result-title">{{year|date:"Y"}}</a>&nbsp;
   {% endfor %}
 </p>
-<h2 class="periodical-browse">Browse</h2>
+</div>
+{% endblock list %}
+{% block obj_browse %}
+<div class="periodical-browse">
+<h2>Browse</h2>
 <ul class="related-links">
-  <li><a class="all-authors" href="{% url 'periodicals_authors_list' %}">Browse Authors</a></li>
-  <li><a class="all-series" href="{% url 'periodicals_series_list' periodical.slug %}">Browse Series/Categories</a></li>
-  <li><a class="all-tags" href="{% url 'periodicals_tags' %}" class="result-title">Browse Tags</a></li>
+  <li><a class="all-authors" href="{% url 'periodicals_authors_list' %}">Authors</a></li>
+  <li><a class="all-series" href="{% url 'periodicals_series_list' periodical.slug %}">Series/Categories</a></li>
+  <li><a class="all-tags" href="{% url 'periodicals_tags' %}">Tags</a></li>
 </ul>
+</div>
+{% endblock obj_browse %}
 {% endblock innercontent %}
