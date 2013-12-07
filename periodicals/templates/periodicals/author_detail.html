@@ -13,23 +13,23 @@
   <h1>Author: {{author.display_name}}</h1>
   {% if author.website or author.email or author.blog or author.alt_website %}
   <h2>Contact Information</h2>
-  <table class="author-detail-table" border="0" cellspacing="0" cellpadding="0" width="100%">
+  <table class="author-detail table">
     {% if author.email %}
-    <tr><td><b>Email:</b></td><td>{{author.email}}</td><td></td></tr>
+    <tr><td><b>Email:</b></td><td>{{author.email}}</td></tr>
     {% endif %}
     {% if author.website %}
-    <tr><td><b>Website:</b></td><td><a class="important-link" href="{{author.website}}">{{author.website}}</a></td><td><td></tr>
+    <tr><td><b>Website:</b></td><td><a class="important-link" href="{{author.website}}">{{author.website}}</a></td></tr>
     {% endif %}
     {% if author.blog %}
-    <tr><td><b>Blog:</b></td><td><a class="important-link" href="{{author.blog}}">{{author.blog}}</a></td><td></td></tr>
+    <tr><td><b>Blog:</b></td><td><a class="important-link" href="{{author.blog}}">{{author.blog}}</a></td></tr>
     {% endif %}
     {% if author.alt_website  %}
-    <tr><td colspan="2"><a class="important-link" href="{{author.alt_website}}">Additional web page for this author</a></td><td></td></tr>
+    <tr><td colspan="2"><a class="important-link" href="{{author.alt_website}}">Additional web page for this author</a></td></tr>
     {% endif %}
   </table>
   {% endif %}
-  {% endblock obj_detail %}
 </div>
+{% endblock obj_detail %}
 {% block obj_list %}
 <div class="article-list">
   <h2>Articles</h2>
