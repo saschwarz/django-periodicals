@@ -8,12 +8,11 @@
 
 {% block innercontent %}
 {% block top_nav %}
-<table class="issue-nav table">
-  <tr>
-    <td class="issue-previous">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}</td>
-    <td class="issue-next">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}</td>
-  </tr>  
-</table>
+<ul class="pager">
+  <li class="previous">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">{{previous_month}}</a>{% endif %}</li>
+  <li class="current"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></li>
+  <li class="next">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}}</a>{% endif %}</li>
+</ul>
 {% endblock top_nav %}
 {% block obj_detail %}
 <h1>{{periodical.name}} {{issue.display_date}}</h1>
@@ -68,10 +67,10 @@
 {% endblock obj_list %}
 {% block links %}
 <h2>Blog Posts, Web Pages, and Videos Referring to This Issue</h2>
-<table class="article-table" style="margin-left:10px;margin-bottom:10px;">
-{% for link in issue.active_links %}
-<tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
-{% endfor %}
+<table class="article-table table table-bordered table-striped" >
+  {% for link in issue.active_links %}
+  <tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
+  {% endfor %}
 </table>
 <p class="add-link">
   <a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url 'periodicals_add_issue_link' periodical.slug issue.slug %}">Add a related blog/web page/video to this issue</a>
@@ -80,9 +79,9 @@
 
 {% block pagination %}
 <ul class="pager">
-  <li class="previous">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">&lt; {{previous_month}}</a>{% endif %}&nbsp;</li>
+  <li class="previous">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">{{previous_month}}</a>{% endif %}</li>
   <li class="current"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></li>
-  <li class="next">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}} &gt;</a>{% endif %}&nbsp;</li>
+  <li class="next">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}}</a>{% endif %}</li>
 </ul>
 {% endblock pagination %}
 {% endblock innercontent %}
