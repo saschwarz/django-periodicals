@@ -54,10 +54,17 @@
   {% if issue.articles %}
   <h2>Articles</h2>
   <table class="article-list table table-bordered table-striped">
-    <tr class="header"><th class="page-header">Page</th><th class="page-title">Title</th><th class="page-authors">Authors</th></tr>
-    {% for article in issue.articles.all %}
-    <tr class="{% cycle 'even' 'odd' %}"><td class="article-page-number">{% if article.page %}<a href="{{article.get_absolute_url}}">{{article.page}}</a>{% else %}&nbsp;{% endif %}</td><td><a href="{{article.get_absolute_url}}">{{article.series}}<br/>{{article.title}}</a></td><td>{% for author in article.authors.all %}<a href="{{author.get_absolute_url}}">{{author.display_name}}</a>&nbsp;{% endfor %}</td></tr>
-    {% endfor %}
+    <thead>
+      <tr><th class="page-header">Page</th><th class="page-title">Title</th><th class="page-authors">Authors</th></tr>
+    </thead>
+    <tbody>
+      {% for article in issue.articles.all %}
+      <tr>      
+        <td class="article-page-number">{% if article.page %}<a href="{{article.get_absolute_url}}">{{article.page}}</a>{% else %}&nbsp;{% endif %}</td>      
+        <td><a href="{{article.get_absolute_url}}">{{article.series}}<br/>{{article.title}}</a></td><td>{% for author in article.authors.all %}<a href="{{author.get_absolute_url}}">{{author.display_name}}</a>&nbsp;{% endfor %}</td>      
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
   {% endif %}
   {% if not issue.articles %}
@@ -69,7 +76,7 @@
 <h2>Blog Posts, Web Pages, and Videos Referring to This Issue</h2>
 <table class="article-table table table-bordered table-striped" >
   {% for link in issue.active_links %}
-  <tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
+  <tr><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
   {% endfor %}
 </table>
 <p class="add-link">
@@ -80,7 +87,7 @@
 {% block pagination %}
 <ul class="pager">
   <li class="previous">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">{{previous_month}}</a>{% endif %}</li>
-  <li class="current"><a  class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></li>
+  <li class="current"><a class="important-link" href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">All {{issue.pub_date|date:"Y"}} Issues</a></li>
   <li class="next">{% if next_month %}<a class="important-link" href="{{next_month.get_absolute_url}}">{{next_month}}</a>{% endif %}</li>
 </ul>
 {% endblock pagination %}

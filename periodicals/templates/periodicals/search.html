@@ -7,36 +7,40 @@
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
+{% block obj_detail %}
+<div class="search_detail">
 <h1>Periodical Search</h1>
-<form method="get" action=".">
-  <div class="fieldWrapper">
-    {{form.q}}<input type="submit" value="Search">
-  </div>
-</form>
-{% if query %}
-{% if page.object_list %}
-<h2>Search Results</h2>
-{% for result in page.object_list %}
-<p>
-  <a href="{{result.object.get_absolute_url}}" class="result-title">{{ result.object.title }}</a><br/>
-  {{result.object.issue.periodical.name}} {{result.object.issue.display_year}} {{result.object.issue.display_name}}
-</p>
-{% endfor %}
-<div class="pagination">
-  <span class="step-links">
-    {% if page.has_previous %}
-    <a href="?q={{query}}&page={{ page.previous_page_number }}">previous</a>
-    {% endif %}
-    <span class="current">
-      Page {{ page.number }} of {{ page.paginator.num_pages }}
-    </span>
-    {% if page.has_next %}
-    <a href="?q={{query}}&page={{ page.next_page_number }}">next</a>
-    {% endif %}
-  </span>
+<div class="search-form">
+  <form method="get" action=".">
+    <div class="fieldWrapper">
+      {{form.q}}<input type="submit" value="Search">
+    </div>
+  </form>
 </div>
-{% else %}
-<h2>No matching articles found.</h2>
-{% endif %}
-{% endif %}
+</div>
+{% endblock obj_detail %}
+{% if query %}
+{% block object_list %}
+{% if page.object_list %}
+<div class="search-results">
+  <h2>Search Results</h2>
+  {% for result in page.object_list %}
+  <p>
+    <div class="result-link"><a href="{{result.object.get_absolute_url}}" class="result-title">{{ result.object.title }}</a></div>
+    <div class="result-summary">{{result.object.issue.periodical.name}} {{result.object.issue.display_year}} {{result.object.issue.display_name}}</div>
+  </p>
+  {% endfor %}
+  {% else %}
+  <h2>No matching articles found.</h2>
+  {% endif %}
+</div>
+{% endblock object_list %}
+  {% endif %}
+{% block pagination %}
+<ul class="pager">
+  <li class="previous">{% if page.has_previous %}<a href="?q={{query}}&page={{ page.previous_page_number }}">previous</a>{% endif %}</li>
+  <li class="current">Page {{ page.number }} of {{ page.paginator.num_pages }}</li>
+  <li class="next">{% if page.has_next %}<a href="?q={{query}}&page={{ page.next_page_number }}">next</a>{% endif %}</li>
+</ul>
+{% endblock pagination %}
 {% endblock innercontent %}

@@ -22,16 +22,11 @@
   {% if article.series %}
   <h2>Series/Category: <a href="{% url 'periodicals_series_detail' periodical.slug article.series|urlize %}">{{article.series}}</a></h2>
   {% endif %}
-  {% if issue.printed_cover or issue.digital_cover %}
-  <div class="article-image">
-    {% if issue.printed_cover %}
-    <a href="{{issue.buy_print}}"><img src="{{MEDIA_URL}}{{issue.printed_cover}}" /></a>
-    <br/>
-    {% endif %}
-    {% if issue.digital_cover %}
-    <a href="{{issue.buy_digital}}"><img src="{{MEDIA_URL}}{{issue.digital_cover}}" /></a>
-    {% endif %}
-  </div>
+  {% if issue.printed_cover %}
+  <div class="article-image"><a href="{{issue.buy_print}}"><img src="{{MEDIA_URL}}{{issue.printed_cover}}" /></a></div>
+  {% endif %}
+  {% if issue.digital_cover %}
+  <div class="article-image"><a href="{{issue.buy_digital}}"><img src="{{MEDIA_URL}}{{issue.digital_cover}}" /></a></div>
   {% endif %}
   {% with article.authors.count as count %}
   <h2>Author{{ count|pluralize }}</h2>
