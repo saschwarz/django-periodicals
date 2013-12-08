@@ -20,7 +20,7 @@ Add ``periodicals`` and the other applications it uses to ``INSTALLED_APPS``:
         'periodicals',
     )
 
-Configure your Haystack backend:
+Configure your Haystack backend. Here is an example using `Whoosh <https://bitbucket.org/mchaput/whoosh/wiki/Home>`_:
 
 .. code-block :: python
 
@@ -67,29 +67,79 @@ Database Setup
      $ python manage.py syncdb
 
 
-Override Templates
-==================
+Override Templates/Blocks
+=========================
 
-``django-periodicals`` provides a ``base.html`` that you may want to override to include the templates in to your existing "glue" application:
+``django-periodicals`` provides a full set of templates for displaying the data models and their relationships, searching and adding moderated links.
+
+``django-periodicals`` defines major template blocks: ``title``, ``breadcrumbs``, ``innercontent`` and ``copyright`` that you can incorporate into your own ``base.html``. There are numerous CSS classes and container ``divs`` to give design layout options without needing to rewrite the templates.
+
+Here is the template inheritance diagram::
+
+                                    /---base.html---
+                              /-----        |       \----
+                        /-----              |            \-----
+                  /-----                    |                  \----
+               ---                          |                       \--
+      base_periodicals.html          article_tag_detail.html       popup.html
+          (adds search)              author_detail.html                 |
+               |                     author_list.html                   |
+               |                     base_periodicals.html              |
+               |                     search.html                        |
+               |                     tags.html                          |
+               |                                                        |
+               |                                                        |
+       base_periodical.html                                        link_add.html
+  (adds copyright per periodical)                                  link_success.html
+               |
+               |
+               |
+       article_detail.html
+       issue_detail.html
+       issue_year.html
+       links.html
+       periodical_detail.html
+       read_online.html
+       series_detail.html
+       series_list.html
+
+You might override ``base.html`` in your existing "glue" application:
 
 .. code-block :: bash
 
-   $ mkdir -p myapp/templates/periodicals/
+   $ cd myapp
+
+   $ mkdir -p templates/periodicals/
 
    $ emacs base.html
 
-``django-periodicals`` defines ``title``, ``breadcrumbs``, ``innercontent`` and ``copyright`` template blocks that you can incorporate into your own base.html ``title`` and ``content`` template blocks. You might override it as follows to use your application's base template and to discard the ``breadcrumbs`` block:
+You might override it as follows to use your application's base template and to discard the ``breadcrumbs`` block from the ``content`` block.
 
 .. code-block :: html
 
    {% extends myapp/base.html %}
 
-   {% block breadcrumbs %}{% endblock breadcrumbs %}
-
    {% block content %}
    {% block innercontent %}{% endblock innercontent %}
    {% block copyright %}{% endblock copyright %}
    {% endblock content %}
+
+
+Optional Settings
+=================
+
+You can control the display format for Author, Periodical, and Issue instances and their URL slugs through the following ``settings.py`` values. The default values are shown below:
+
+.. code-block :: python
+
+    PERIODICALS_AUTHOR_FORMAT = "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s"
+    PERIODICALS_AUTHOR_SLUG_FORMAT = "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s"
+
+    PERIODICALS_PERIODICAL_FORMAT = "%(name)s"
+    PERIODICALS_PERIODICAL_SLUG_FORMAT = "%(name)s"
+
+    PERIODICALS_ISSUE_FORMAT = "Vol. %(volume)s No. %(issue)s"
+    PERIODICALS_ISSUE_SLUG_FORMAT = "%(volume)s %(issue)s"
 
 
 Entering Data
@@ -111,4 +161,3 @@ Since adding Articles will likely be an occasional operation ``django-periodical
 .. code-block :: bash
 
   $ python manage.py update_index
-

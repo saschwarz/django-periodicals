@@ -12,7 +12,7 @@ django-periodicals
         :target: https://crate.io/packages/django-periodicals?version=latest
 
 
-A Django app for periodical/magazine websites with tagging and search.
+A Django app for periodical/magazine websites with indepth indices including tagging and search.
 
 Documentation
 -------------
@@ -57,7 +57,7 @@ Add ``periodicals`` and the other applications it uses to ``INSTALLED_APPS``:
         'periodicals',
     )
 
-Configure your Haystack backend:
+Configure your Haystack backend. Here is an example using `Whoosh <https://bitbucket.org/mchaput/whoosh/wiki/Home>`_:
 
 .. code-block :: python
 
@@ -107,26 +107,34 @@ Management Commands
 Features
 --------
 
-* Provides Django models for Periodicals, Issues, Articles and Authors.
+I developed ``django-periodicals`` to provide a searchable index for a printed magazine. I wanted all the meta data to be fully cross linked. So users can find all articles for an Author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
+
+I turned it in to a standalone application when I ported it to Django 1.5. Here are the features:
+
+* Provides Django models for Periodicals, Issues, Articles, Authors, Tags and Links to external material. 
 
 * A full set of templates are provided including:
 
-  * Individual Periodical pages with yearly indices
+  * Individual Periodical pages with yearly indices.
 
-  * Index of Authors, Issues, Article Series
+  * Fully cross-linked indexes of Authors, Issues, Article Series, Tags, and Articles.
 
-  * Search across Article titles and descriptions
+  * Search across Article titles and descriptions.
 
   * Tagging:
 
-    * Per article
+    * Per article.
 
-    * Index pages per tag
+    * Index pages per tag.
 
-    * Tag cloud
+    * Tag cloud.
 
-* Users added links of blog posts and other web resources to each Issue and Article. Protected by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin.
+* Moderated user added links of blog posts and other web resources to each Issue and Article. Spam protection by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin.
 
-* Use the Django admin to enter each of the data model instances.
+* Django admin forms for data entry.
+
+* Support for Python 2.6, 2.7 and Django 1.5 and 1.6.
+
+* Travis CI unit tests.
 
 * See ``django-periodicals`` in action at `Googility <http://googility.com/periodicals/>`_.
