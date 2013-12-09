@@ -79,7 +79,7 @@
   <ul>
     {% tags_for_object article as tag_list %}
     {% for tag in tag_list %}
-    <li><a href="{% url 'periodicals_article_tag_detail' tag.name|slugify %}">{{tag.name}}</a></li>
+    <li><a href="{% url 'periodicals_article_tag_detail' tag.name %}">{{tag.name}}</a></li>
     {% endfor %}
   </ul>
   <a href="{% url 'periodicals_tags' %}">All Article Tags</a>
