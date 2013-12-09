@@ -70,7 +70,7 @@ Database Setup
 Override Templates/Blocks
 =========================
 
-``django-periodicals`` provides a full set of templates for displaying the data models and their relationships, searching and adding moderated links.
+``django-periodicals`` provides a full set of templates for displaying the data models and their relationships, searching and adding moderated links. So you can just use it right out of the box.
 
 ``django-periodicals`` defines major template blocks: ``title``, ``breadcrumbs``, ``innercontent`` and ``copyright`` that you can incorporate into your own ``base.html``. There are numerous CSS classes and container ``divs`` to give design layout options without needing to rewrite the templates.
 
@@ -161,3 +161,34 @@ Since adding Articles will likely be an occasional operation ``django-periodical
 .. code-block :: bash
 
   $ python manage.py update_index
+
+
+Sitemap Support
+===============
+
+``django-periodicals`` provides sitemap.xml support via `django.contrib.sitemaps <https://docs.djangoproject.com/en/dev/ref/contrib/sitemaps/>`_. 
+
+#. Install ``django'contrib.sitemaps`` in you ``settings.py``:
+
+.. code-block :: python
+
+    INSTALLED_APPS = (
+       'django.contrib.sitemaps',
+        ...
+        'haystack',
+        'tagging',
+        'captcha',
+        'periodicals',
+    )
+
+#. In your ``urls.py`` import the ``sitemaps_at`` method from ``periodicals.sitemaps``, add the ``sitemap.xml`` regular expression and place the url location where you put the root of the periodicals application as the argument to ``sitemaps_at``:
+
+.. code-block :: python
+
+  from periodicals.sitemaps import sitemaps_at
+
+
+  urlpatterns = patterns('',
+      ...
+      (r'^sitemap.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps_at('/periodicals')}),
+  )

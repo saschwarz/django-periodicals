@@ -22,7 +22,7 @@ The full documentation is at http://django-periodicals.rtfd.org.
 Quickstart
 ----------
 
-Simple to install from a package using ``pip`` which will install all it's dependencies:
+Simple to install from a package using ``pip`` which will install all it's dependencies (coming soon). For now see :ref:`installing-from-github`.
 
 .. code-block :: bash
 
@@ -35,6 +35,7 @@ Install two packages manually to get newer versions than are currently in `PyPi 
   $ pip install -e git://github.com/saschwarz/django-recaptcha.git#egg=django-recaptcha
 
   $ pip install -e git://github.com/nemith/django-tagging.git@dev-django1.5#egg=django_tagging-dev
+
 
 Install a search backend for use by `Haystack <http://haystacksearch.org/>`_. To start install Whoosh:
 
@@ -132,6 +133,8 @@ I turned it in to a standalone application when I ported it to Django 1.5. Here 
 * Moderated user added links of blog posts and other web resources to each Issue and Article. Spam protection by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin.
 
 * Django admin forms for data entry.
+
+* Sitemap support.
 
 * Support for Python 2.6, 2.7 and Django 1.5 and 1.6.
 

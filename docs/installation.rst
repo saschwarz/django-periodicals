@@ -25,6 +25,8 @@ Install two packages/applications manually to get newer versions than are curren
 Continue installing with Haystack below.
 
 
+.. _installing-from-github:
+
 Installing from GitHub
 ======================
 

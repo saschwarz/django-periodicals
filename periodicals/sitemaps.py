@@ -4,21 +4,10 @@ from .models import Author, Periodical, Issue, Article
 from tagging.models import Tag
 
 
-class StaticPagesSitemap(Sitemap):
-    changefreq = "never"
-    priority = 0.5
-
-    def items(self):
-        return ['/about_me.html', '/contact.html', '/some-static-url.html']
-
-    def location(self, obj):
-        return obj
-
-
 class SlugSitemap(GenericSitemap):
     """
     Use for objects that don't implement get_absolute_url
-    but have a slug field used in creating their url
+    but have a slug field used in creating their url.
     """
     def __init__(self, info_dict, priority=None, changefreq=None):
         GenericSitemap.__init__(self,
@@ -36,7 +25,7 @@ class SlugSitemap(GenericSitemap):
 class SuffixedSitemap(GenericSitemap):
     """
     Use for sitemap entries based on objects that implement
-    get_absolute_url but append a suffix in creating their url
+    get_absolute_url but append a suffix in creating their url.
     """
     def __init__(self, info_dict, priority=None, changefreq=None):
         GenericSitemap.__init__(self,
@@ -79,3 +68,10 @@ sitemaps = {
         changefreq='monthly',
         priority='0.7'),
 }
+
+def sitemaps_at(root='/periodicals'):
+    for site_map in sitemaps.values():
+        if getattr(site_map, 'url', False):
+            # SlugSitemap - append location at which we are rooting the periodicals application
+            site_map.url = root + site_map.url
+    return sitemaps
