@@ -95,6 +95,13 @@ class ArticleTags(TaggedObjectListView):
     queryset = Article.objects.order_by('-issue__pub_date').select_related().all()
     paginate_by = settings.PERIODICALS_PAGINATION
 
+    def get_queryset(self):
+        tag = self.kwargs.get('tag', None)
+        if tag:
+            # unslugify tag
+            self.kwargs['tag'] = tag.replace('-', ' ')
+        
+        return super(ArticleTags, self).get_queryset()
 
 class PeriodicalList(ListView):
     model = Periodical
