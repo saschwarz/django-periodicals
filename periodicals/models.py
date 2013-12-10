@@ -17,35 +17,17 @@ try:
 except ImportError:
     from tagging.fields import TagField
 
-try:
-    settings.PERIODICALS_AUTHOR_FORMAT
-except AttributeError:
-    settings.PERIODICALS_AUTHOR_FORMAT = "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s"
+settings.PERIODICALS_AUTHOR_FORMAT = getattr(settings, "PERIODICALS_AUTHOR_FORMAT", "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s")
 
-try:
-    settings.PERIODICALS_AUTHOR_SLUG_FORMAT
-except AttributeError:
-    settings.PERIODICALS_AUTHOR_SLUG_FORMAT = "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s"
+settings.PERIODICALS_AUTHOR_SLUG_FORMAT = getattr(settings, "PERIODICALS_AUTHOR_SLUG_FORMAT", "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s")
 
-try:
-    settings.PERIODICALS_PERIODICAL_FORMAT
-except AttributeError:
-    settings.PERIODICALS_PERIODICAL_FORMAT = "%(name)s"
+settings.PERIODICALS_PERIODICAL_FORMAT = getattr(settings, "PERIODICALS_PERIODICAL_FORMAT", "%(name)s")
 
-try:
-    settings.PERIODICALS_PERIODICAL_SLUG_FORMAT
-except AttributeError:
-    settings.PERIODICALS_PERIODICAL_SLUG_FORMAT = "%(name)s"
+settings.PERIODICALS_PERIODICAL_SLUG_FORMAT = getattr(settings, "PERIODICALS_PERIODICAL_SLUG_FORMAT", "%(name)s")
 
-try:
-    settings.PERIODICALS_ISSUE_FORMAT
-except AttributeError:
-    settings.PERIODICALS_ISSUE_FORMAT = "Vol. %(volume)s No. %(issue)s"
+settings.PERIODICALS_ISSUE_FORMAT = getattr(settings, "PERIODICALS_ISSUE_FORMAT", "Vol. %(volume)s No. %(issue)s")
 
-try:
-    settings.PERIODICALS_ISSUE_SLUG_FORMAT
-except AttributeError:
-    settings.PERIODICALS_ISSUE_SLUG_FORMAT = "%(volume)s %(issue)s"
+settings.PERIODICALS_ISSUE_SLUG_FORMAT = getattr(settings, "PERIODICALS_ISSUE_SLUG_FORMAT", "%(volume)s %(issue)s")
 
 
 class ActiveLinkManager(models.Manager):

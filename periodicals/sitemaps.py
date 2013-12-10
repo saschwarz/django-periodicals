@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.contrib.sitemaps import Sitemap, GenericSitemap
+from django.contrib.sitemaps import GenericSitemap
 from .models import Author, Periodical, Issue, Article
 from tagging.models import Tag
 
@@ -68,6 +68,7 @@ sitemaps = {
         changefreq='monthly',
         priority='0.7'),
 }
+
 
 def sitemaps_at(root='/periodicals'):
     for site_map in sitemaps.values():

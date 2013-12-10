@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from haystack.views import SearchView
 from haystack.query import SearchQuerySet

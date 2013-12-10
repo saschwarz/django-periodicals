@@ -1,5 +1,4 @@
 from django.views.generic import ArchiveIndexView, DetailView, ListView, TemplateView, YearArchiveView
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404, render_to_response
@@ -14,13 +13,11 @@ from django.contrib.sites.models import Site
 from tagging.views import TaggedObjectListView
 from captcha.fields import ReCaptchaField
 
-from .models import Author, Periodical, Issue, Article, LinkItem
+from .models import Author, Periodical, Issue, Article
 
 
-try:
-    settings.PERIODICALS_PAGINATION
-except AttributeError:
-    settings.PERIODICALS_PAGINATION = 20
+settings.PERIODICALS_PAGINATION = getattr(settings, 'PERIODICALS_PAGINATION', 20)
+
 
 class AuthorList(ListView):
     model = Author
@@ -29,6 +26,7 @@ class AuthorList(ListView):
         order_by("last_name", "first_name")
     template_name = 'periodicals/author_list.html'
     paginate_by = settings.PERIODICALS_PAGINATION
+
 
 class AuthorDetail(ListView):
     model = Article
@@ -58,7 +56,7 @@ class SeriesList(ListView):
 
     def get_queryset(self):
         self.periodical = get_object_or_404(Periodical,
-                                       slug=self.kwargs['periodical_slug'])
+                                            slug=self.kwargs['periodical_slug'])
         return Article.objects.filter(issue__periodical=self.periodical).\
             order_by('series').values('series').annotate(series_count=Count('series'))
 
@@ -100,8 +98,9 @@ class ArticleTags(TaggedObjectListView):
         if tag:
             # unslugify tag
             self.kwargs['tag'] = tag.replace('-', ' ')
-        
+
         return super(ArticleTags, self).get_queryset()
+
 
 class PeriodicalList(ListView):
     model = Periodical
@@ -221,7 +220,7 @@ class ArticleDetail(DetailView):
 def read_online(request, periodical_slug):
     periodical = get_object_or_404(Periodical, slug=periodical_slug)
     return render_to_response('periodicals/read_online.html',
-                              {'articles' : Article.objects.exclude(read_online__exact='').select_related().order_by('-issue__pub_date'),
+                              {'articles': Article.objects.exclude(read_online__exact='').select_related().order_by('-issue__pub_date'),
                                'issues': Issue.objects.exclude(read_online__exact='').select_related().order_by('-pub_date'),
                                'periodical': periodical,
                                },
@@ -234,12 +233,12 @@ def add_article_link(request, periodical_slug, issue_slug, article_slug):
     issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
     article = get_object_or_404(Article, slug=article_slug, issue=issue)
     try:
-        admin_url = urlresolvers.reverse('admin:periodicals_article_change', 
-                                                   args=(article.id,))
+        admin_url = urlresolvers.reverse('admin:periodicals_article_change',
+                                         args=(article.id,))
     except urlresolvers.NoReverseMatch:
         # admin not installed
         admin_url = ""
-    return add_link(request, 
+    return add_link(request,
                     article,
                     admin_url=admin_url)
 
@@ -248,7 +247,7 @@ def add_issue_link(request, periodical_slug, issue_slug):
     periodical = get_object_or_404(Periodical, slug=periodical_slug)
     issue = get_object_or_404(Issue, slug=issue_slug, periodical=periodical)
     try:
-        admin_url = urlresolvers.reverse('admin:periodicals_issue_change', 
+        admin_url = urlresolvers.reverse('admin:periodicals_issue_change',
                                          args=(issue.id,))
     except urlresolvers.NoReverseMatch:
         # admin not installed
