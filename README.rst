@@ -12,7 +12,7 @@ django-periodicals
         :target: https://crate.io/packages/django-periodicals?version=latest
 
 
-A Django app for periodical/magazine websites with indepth indices including tagging and search.
+A Django application for periodical/magazine websites with fully cross linked indices on Periodical, Issue, Article, Author, Article Series and Tags. Provides full text search of article titles and descriptions. A complete set of templates are provided. A sitemap is also dynamically generated.
 
 Documentation
 -------------
@@ -108,7 +108,7 @@ Management Commands
 Features
 --------
 
-I developed ``django-periodicals`` to provide a searchable index for a printed magazine. I wanted all the meta data to be fully cross linked. So users can find all articles for an Author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
+I developed ``django-periodicals`` to provide a searchable index for a printed magazine. I wanted all the meta data to be fully cross linked. So users can easily browse all articles for an author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
 
 I turned it in to a standalone application when I ported it to Django 1.5. Here are the features:
 
