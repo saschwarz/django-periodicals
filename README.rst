@@ -22,7 +22,7 @@ The full documentation is at http://django-periodicals.rtfd.org.
 Quickstart
 ----------
 
-Simple to install from a package using ``pip`` which will install all it's dependencies (coming soon). For now see :ref:`installing-from-github`.
+Simple to install from a package using ``pip`` which will install all it's dependencies (coming soon). For now see `installing-from-github <http://django-periodicals.readthedocs.org/en/latest/installation.html#installing-from-github>`.
 
 .. code-block :: bash
 
