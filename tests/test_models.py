@@ -21,6 +21,23 @@ class TestLinkItem(TestCase):
     def test_unicode(self):
         self.assertEqual("An Example Link", unicode(self.link))
 
+    def test_none_active(self):
+        self.assertEqual(0, models.LinkItem.active.count())
+
+    def test_one_active(self):
+        periodical = models.Periodical(name="Periodical Name",
+                                       country="USA")
+        periodical.save()
+        issue = models.Issue(periodical=periodical,
+                             volume=1,
+                             issue=10,
+                             pub_date=datetime(2013, 11, 1))
+        issue.save()
+        issue.links.create(status=models.LinkItem.STATUS_ACTIVE,
+                           url='http://example.com',
+                           title='title')
+        self.assertEqual(1, models.LinkItem.active.count())
+
 
 class TestAuthor(TestCase):
 
@@ -42,7 +59,8 @@ class TestAuthor(TestCase):
 
     def test_get_absolute_url(self):
         self.author.save()
-        self.assertEqual("/authors/lastname-firstname-middle-phd/", self.author.get_absolute_url())
+        self.assertEqual("/authors/lastname-firstname-middle-phd/",
+                         self.author.get_absolute_url())
 
     def test_display_name_last_name_only(self):
         author = models.Author(last_name='Lastname')

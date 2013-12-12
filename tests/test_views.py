@@ -14,9 +14,10 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core import management
 from django.db import IntegrityError
-from periodicals.models import Author, Periodical, Issue, Article
+from periodicals.models import Author, Periodical, Issue, Article, LinkItem
 
 os.environ['RECAPTCHA_TESTING'] = 'True'
+
 
 class TestSetup(TestCase):
 
@@ -76,8 +77,9 @@ class TestAuthorViews(TestSetup):
         self.assertEqual(2, authors[0].articles__count)
 
     def test_author_detail(self):
-        resp = self.client.get(reverse('periodicals_author_detail',
-                                       kwargs={'author_slug': 'newman-alfred-e'}))
+        resp = self.client.get(
+            reverse('periodicals_author_detail',
+                    kwargs={'author_slug': 'newman-alfred-e'}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/author_detail.html')
         author = resp.context['author']
@@ -89,8 +91,9 @@ class TestAuthorViews(TestSetup):
 class TestSeriesViews(TestSetup):
 
     def test_series_list(self):
-        resp = self.client.get(reverse('periodicals_series_list',
-                                       kwargs={'periodical_slug': 'mad-magazine'}))
+        resp = self.client.get(
+            reverse('periodicals_series_list',
+                    kwargs={'periodical_slug': 'mad-magazine'}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/series_list.html')
         self.assertTemplateUsed(resp, 'periodicals/base_periodicals.html')
@@ -104,9 +107,10 @@ class TestSeriesViews(TestSetup):
         self.assertEqual(1, series[1]['series_count'])
 
     def test_series_detail(self):
-        resp = self.client.get(reverse('periodicals_series_detail',
-                                       kwargs={'periodical_slug': 'mad-magazine',
-                                               'series': 'Editorial'}))
+        resp = self.client.get(
+            reverse('periodicals_series_detail',
+                    kwargs={'periodical_slug': 'mad-magazine',
+                            'series': 'Editorial'}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/series_detail.html')
         series = resp.context['series']
@@ -121,8 +125,9 @@ class TestSeriesViews(TestSetup):
 class TestPeriodicalViews(TestSetup):
 
     def test_periodical_detail(self):
-        resp = self.client.get(reverse('periodicals_periodical_detail',
-                                       kwargs={'periodical_slug': 'mad-magazine'}))
+        resp = self.client.get(
+            reverse('periodicals_periodical_detail',
+                    kwargs={'periodical_slug': 'mad-magazine'}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/periodical_detail.html')
         periodical = resp.context['periodical']
@@ -159,9 +164,10 @@ class TestIssueViews(TestSetup):
         self.assertEqual(None, next_month)
 
     def test_issue_detail_with_previous_and_next_issues(self):
-        resp = self.client.get(reverse('periodicals_issue_detail',
-                                       kwargs={'periodical_slug': 'mad-magazine',
-                                               'issue_slug': '1-10'}))
+        resp = self.client.get(
+            reverse('periodicals_issue_detail',
+                    kwargs={'periodical_slug': 'mad-magazine',
+                            'issue_slug': '1-10'}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/issue_detail.html')
         issue = resp.context['issue']
@@ -186,10 +192,11 @@ class TestIssueViews(TestSetup):
 class TestIssueYearView(TestSetup):
 
     def test_issue_year(self):
-        resp = self.client.get(reverse('periodicals_issue_year',
-                                       kwargs={'periodical_slug': 'mad-magazine',
-                                               'year': 2011,
-                                               }))
+        resp = self.client.get(
+            reverse('periodicals_issue_year',
+                    kwargs={'periodical_slug': 'mad-magazine',
+                            'year': 2011,
+                            }))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/issue_year.html')
         periodical = resp.context['periodical']
@@ -231,9 +238,9 @@ class TestIssueYearView(TestSetup):
                        )
         issue2.save()
         url = reverse('periodicals_issue_year',
-                                       kwargs={'periodical_slug': 'crazy-cat',
-                                               'year': '2011',
-                                               })
+                      kwargs={'periodical_slug': 'crazy-cat',
+                              'year': '2011',
+                              })
         resp = self.client.get(url)
         self.assertEqual(200, resp.status_code)
         issue_list = resp.context['date_list']
@@ -244,7 +251,7 @@ class TestIssueYearView(TestSetup):
         self.assertEqual('2012', next_year.strftime('%Y'))
         previous_year = resp.context['previous_year']
         self.assertEqual('2010', previous_year.strftime('%Y'))
-        
+
 
 class TestArticleDetailView(TestSetup):
 
@@ -260,7 +267,8 @@ class TestArticleDetailView(TestSetup):
         single_issue.save()
         article = Article(issue=single_issue,
                           series="Humor",
-                          title="Fun Alone")
+                          title="Fun Alone",
+                          page=10)
         article.save()
         article.authors.add(self.author)
 
@@ -280,7 +288,7 @@ class TestArticleDetailView(TestSetup):
         self.assertEqual(None, next_article)
         previous_article = resp.context['previous_article']
         self.assertEqual(None, previous_article)
-        
+
     def test_article_detail_one_previous_and_one_next_article(self):
         self.article1.page = 8
         self.article1.save()
@@ -374,7 +382,7 @@ class TestLinkViews(TestSetup):
 
     def setUp(self):
         super(TestLinkViews, self).setUp()
-        self.article.links.create(status='A',
+        self.article.links.create(status=LinkItem.STATUS_ACTIVE,
                                   url="http://example.com/",
                                   title="Example Site")
         self.article.save()
@@ -382,8 +390,9 @@ class TestLinkViews(TestSetup):
     def test_links(self):
         links = self.article.active_links()
         self.assertEqual(1, len(links))
-        resp = self.client.get(reverse('periodicals_links',
-                                       kwargs={'periodical_slug': self.periodical.slug}))
+        resp = self.client.get(
+            reverse('periodicals_links',
+                    kwargs={'periodical_slug': self.periodical.slug}))
         self.assertEqual(200, resp.status_code)
         self.assertTemplateUsed(resp, 'periodicals/links.html')
         self.assertTemplateUsed(resp, 'periodicals/base_periodicals.html')
@@ -395,35 +404,47 @@ class TestLinkViews(TestSetup):
         self.assertTrue(links[0].title in resp.content)
         self.assertTrue(links[0].url in resp.content)
 
+    def test_get_add_issue_link(self):
+        resp = self.client.get(
+            reverse('periodicals_add_issue_link',
+                    kwargs={'periodical_slug': self.periodical.slug,
+                            'issue_slug': self.issue0.slug}))
+        self.assertEqual(resp.status_code, 200)
+
     def test_add_issue_link(self):
-        resp = self.client.post(reverse('periodicals_add_issue_link',
-                                        kwargs={'periodical_slug': self.periodical.slug,
-                                                'issue_slug': self.issue0.slug}),
-                                {'title': 'link title',
-                                 'url': 'http://example.com',
-                                 'recaptcha_response_field': "PASSED"})
+        resp = self.client.post(
+            reverse('periodicals_add_issue_link',
+                    kwargs={'periodical_slug': self.periodical.slug,
+                            'issue_slug': self.issue0.slug}),
+            {'title': 'link title',
+             'url': 'http://example.com',
+             'recaptcha_response_field': "PASSED"})
         self.assertEqual(resp.status_code, 302)
-        # redirects to success page 
+        # redirects to success page
         redirect_url = urlparse.urlsplit(resp['Location']).path
         dest = reverse('periodicals_add_link_success')
         self.assertTrue(redirect_url.endswith(dest))
-        self.assertTrue(2, len(self.issue0.links.all()))
+        self.assertEqual(1, len(self.issue0.links.all()))
+        self.assertEqual(1, LinkItem.active.count())
 
     def test_add_article_link(self):
-        resp = self.client.post(reverse('periodicals_add_article_link',
-                                        kwargs={'periodical_slug': self.periodical.slug,
-                                                'issue_slug': self.issue1.slug,
-                                                'article_slug': self.article.slug}),
-                                {'title': 'link title',
-                                 'url': 'http://example.com',
-                                 'recaptcha_response_field': "PASSED"})
+        resp = self.client.post(
+            reverse('periodicals_add_article_link',
+                    kwargs={'periodical_slug': self.periodical.slug,
+                            'issue_slug': self.issue1.slug,
+                            'article_slug': self.article.slug}),
+            {'title': 'link title',
+             'url': 'http://example.com',
+             'recaptcha_response_field': "PASSED"})
         self.assertEqual(resp.status_code, 302)
-        # redirects to success page 
+        # redirects to success page
         redirect_url = urlparse.urlsplit(resp['Location']).path
         dest = reverse('periodicals_add_link_success')
         self.assertTrue(redirect_url.endswith(dest))
         # did link get created?
         self.assertTrue(2, len(self.article.links.all()))
+        self.assertTrue(1, LinkItem.active.count())
+
 
 class TestSearch(TestSetup):
 
@@ -445,24 +466,28 @@ class TestSearch(TestSetup):
         self.article.save()
         self.article1.description = 'some fun now'
         self.article1.save()
-        management.call_command('rebuild_index', interactive=False, verbosity=0)
+        management.call_command('rebuild_index',
+                                interactive=False,
+                                verbosity=0)
         resp = self.client.get(reverse('haystack_search'),
                                {'q': 'having'})
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'periodicals/search.html')
         self.assertEqual(1, len(resp.context['page'].object_list))
-        self.assertEqual(self.article.id, int(resp.context['page'].object_list[0].pk))
+        self.assertEqual(self.article.id,
+                         int(resp.context['page'].object_list[0].pk))
 
     def test_search_returns_multiple_results(self):
         self.article.description = 'having some fun now'
         self.article.save()
         self.article1.description = 'some fun now'
         self.article1.save()
-        management.call_command('rebuild_index', interactive=False, verbosity=0)
+        management.call_command('rebuild_index',
+                                interactive=False, verbosity=0)
         resp = self.client.get(reverse('haystack_search'),
                                {'q': 'some fun'})
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'periodicals/search.html')
         self.assertEqual(2, len(resp.context['page'].object_list))
-        self.assertEqual(set([self.article.id, self.article1.id]), 
+        self.assertEqual(set([self.article.id, self.article1.id]),
                          set([int(x.pk) for x in resp.context['page'].object_list]))

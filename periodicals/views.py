@@ -13,7 +13,7 @@ from django.contrib.sites.models import Site
 from tagging.views import TaggedObjectListView
 from captcha.fields import ReCaptchaField
 
-from .models import Author, Periodical, Issue, Article
+from .models import Author, Periodical, Issue, Article, LinkItem
 
 
 settings.PERIODICALS_PAGINATION = getattr(settings, 'PERIODICALS_PAGINATION', 20)
@@ -278,7 +278,7 @@ class LinkItemForm(forms.Form):
     recaptcha = ReCaptchaField()
 
 
-def add_link(request, object,
+def add_link(request, instance,
              form_class=LinkItemForm,
              template_name='periodicals/link_add.html',
              success_url='/periodicals/links/added/',
@@ -286,12 +286,12 @@ def add_link(request, object,
     if request.method == 'POST':
         form = form_class(data=request.POST)
         if form.is_valid():
-            object.links.create(status='S',
-                                url=form.cleaned_data['url'],
-                                title=form.cleaned_data['title'])
+            instance.links.create(status=LinkItem.STATUS_SUBMITTED,
+                                  url=form.cleaned_data['url'],
+                                  title=form.cleaned_data['title'])
             email_body = "Link added to: http://%s%s admin: http://%s%s" % (
                 Site.objects.get_current().domain,
-                object.get_absolute_url(),
+                instance.get_absolute_url(),
                 Site.objects.get_current().domain,
                 admin_url)
             mail_managers("New Link Added", email_body)
@@ -300,7 +300,7 @@ def add_link(request, object,
         form = form_class()
     return render_to_response(template_name,
                               {'form': form,
-                               'object': object,
-                               'object_class': object.__class__.__name__,
+                               'object': instance,
+                               'object_class': instance.__class__.__name__,
                                },
                               context_instance=RequestContext(request))
