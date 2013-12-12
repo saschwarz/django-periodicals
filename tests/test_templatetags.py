@@ -10,8 +10,29 @@ from datetime import datetime
 from django.test import TestCase
 from periodicals import models
 from periodicals.templatetags.periodicals_tags import (
+    article_result,
     periodical_copyright,
     ArticleCountNode)
+
+
+class TestArticleResult(TestCase):
+
+    def setUp(self):
+        periodical = models.Periodical(name="Periodical Name",
+                                       country="USA")
+        periodical.save()
+        issue = models.Issue(periodical=periodical,
+                             volume=1,
+                             issue=10,
+                             pub_date=datetime(2013, 11, 1))
+        issue.save()
+        self.article = models.Article.objects.create(title="Article Title",
+                                                     page=10,
+                                                     issue=issue)
+
+    def test_without_autoescape(self):
+        self.assertEqual('<p><div><a href="/periodical-name/1-10/article-title/" class="result-title">Article Title</a></div><div class="article-result-series"></div><div class="result-issue-info">Periodical Name 2013 Vol. 1 No. 10 Page: 10</div></p>', 
+                         article_result(self.article))
 
 
 class TestPeriodicalCopyright(TestCase):

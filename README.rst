@@ -8,6 +8,9 @@ django-periodicals
 .. image:: https://travis-ci.org/saschwarz/django-periodicals.png?branch=master
         :target: https://travis-ci.org/saschwarz/django-periodicals
 
+.. image:: https://coveralls.io/repos/saschwarz/django-periodicals/badge.png?branch=master 
+        :target: https://coveralls.io/r/saschwarz/django-periodicals?branch=master
+
 .. image:: https://pypip.in/d/django-periodicals/badge.png
         :target: https://crate.io/packages/django-periodicals?version=latest
 
