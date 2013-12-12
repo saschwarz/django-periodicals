@@ -17,17 +17,26 @@ try:
 except ImportError:
     from tagging.fields import TagField
 
-settings.PERIODICALS_AUTHOR_FORMAT = getattr(settings, "PERIODICALS_AUTHOR_FORMAT", "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s")
+settings.PERIODICALS_AUTHOR_FORMAT = \
+    getattr(settings, "PERIODICALS_AUTHOR_FORMAT",
+            "%(last_name)s, %(first_name)s %(middle_name)s %(postnomial)s")
 
-settings.PERIODICALS_AUTHOR_SLUG_FORMAT = getattr(settings, "PERIODICALS_AUTHOR_SLUG_FORMAT", "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s")
+settings.PERIODICALS_AUTHOR_SLUG_FORMAT = \
+    getattr(settings, "PERIODICALS_AUTHOR_SLUG_FORMAT",
+            "%(last_name)s %(first_name)s %(middle_name)s %(postnomial)s")
 
-settings.PERIODICALS_PERIODICAL_FORMAT = getattr(settings, "PERIODICALS_PERIODICAL_FORMAT", "%(name)s")
+settings.PERIODICALS_PERIODICAL_FORMAT = \
+    getattr(settings, "PERIODICALS_PERIODICAL_FORMAT", "%(name)s")
 
-settings.PERIODICALS_PERIODICAL_SLUG_FORMAT = getattr(settings, "PERIODICALS_PERIODICAL_SLUG_FORMAT", "%(name)s")
+settings.PERIODICALS_PERIODICAL_SLUG_FORMAT = \
+    getattr(settings, "PERIODICALS_PERIODICAL_SLUG_FORMAT", "%(name)s")
 
-settings.PERIODICALS_ISSUE_FORMAT = getattr(settings, "PERIODICALS_ISSUE_FORMAT", "Vol. %(volume)s No. %(issue)s")
+settings.PERIODICALS_ISSUE_FORMAT = \
+    getattr(settings, "PERIODICALS_ISSUE_FORMAT",
+            "Vol. %(volume)s No. %(issue)s")
 
-settings.PERIODICALS_ISSUE_SLUG_FORMAT = getattr(settings, "PERIODICALS_ISSUE_SLUG_FORMAT", "%(volume)s %(issue)s")
+settings.PERIODICALS_ISSUE_SLUG_FORMAT = \
+    getattr(settings, "PERIODICALS_ISSUE_SLUG_FORMAT", "%(volume)s %(issue)s")
 
 
 class ActiveLinkManager(models.Manager):
@@ -75,13 +84,6 @@ class LinkItem(models.Model):
 
     def __unicode__(self):
         return self.title
-
-    # @permalink
-    # def get_absolute_url(self):
-    #     return ('periodicals_article_detail', (),
-    #             {'periodical_slug': self.issue.periodical.slug,
-    #              'issue_slug': self.issue.slug,
-    #              'link_slug': self.slug})
 
 
 class Author(models.Model):
@@ -139,7 +141,8 @@ class Author(models.Model):
     def save(self, force_insert=False, force_update=False):
         if not self.id and not self.slug:  # use the user's slug if supplied
             # don't transmogrify slug/URL on update
-            self.slug = slugify(_(settings.PERIODICALS_AUTHOR_SLUG_FORMAT) % _instanceFields(self))
+            self.slug = slugify(_(settings.PERIODICALS_AUTHOR_SLUG_FORMAT)
+                                % _instanceFields(self))
         super(Author, self).save(force_insert, force_update)
 
     def display_name(self):

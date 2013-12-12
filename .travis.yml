@@ -19,6 +19,9 @@ script:
   - coverage run --source periodicals runtests.py
   - coverage report
 
+after_success:
+  coveralls
+
 matrix:
   exclude:
     - python: "3.3"
