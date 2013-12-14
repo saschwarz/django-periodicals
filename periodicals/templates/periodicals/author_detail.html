@@ -4,7 +4,7 @@
 {% block title %}{{block.super}} - Author - {{author.display_name}} {% endblock %}
 
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_authors_list' %}">All Authors</a>&nbsp;>&nbsp;{{author.display_name}}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_authors_list' %}">All Authors</a>&nbsp;&gt;&nbsp;{{author.display_name}}</div>
 {% endblock breadcrumbs %}
 
 {% block innercontent %}

@@ -1,4 +1,5 @@
-from django.views.generic import ArchiveIndexView, DetailView, ListView, TemplateView, YearArchiveView
+from django.views.generic import (ArchiveIndexView, DetailView,
+                                  ListView, TemplateView, YearArchiveView)
 from django.db.models import Count
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404, render_to_response
@@ -15,8 +16,8 @@ from captcha.fields import ReCaptchaField
 
 from .models import Author, Periodical, Issue, Article, LinkItem
 
-
 settings.PERIODICALS_PAGINATION = getattr(settings, 'PERIODICALS_PAGINATION', 20)
+settings.PERIODICALS_LINKS_ENABLED = getattr(settings, 'PERIODICALS_LINKS_ENABLED', True)
 
 
 class AuthorList(ListView):
@@ -124,6 +125,7 @@ class PeriodicalDetail(ArchiveIndexView):
         context = super(PeriodicalDetail, self).get_context_data(**kwargs)
         periodical = get_object_or_404(Periodical, slug=self.periodical_slug)
         context['periodical'] = periodical
+        context['links_enabled'] = settings.PERIODICALS_LINKS_ENABLED
         return context
 
 
@@ -176,6 +178,8 @@ class IssueDetail(TemplateView):
         context['periodical'] = periodical
         context['previous_month'] = previous_month
         context['next_month'] = next_month
+        context['links_enabled'] = settings.PERIODICALS_LINKS_ENABLED
+        context['form'] = LinkItemForm()
         return context
 
 
@@ -214,6 +218,8 @@ class ArticleDetail(DetailView):
         context['issue'] = self.issue
         context['previous_article'] = previous_article
         context['next_article'] = next_article
+        context['links_enabled'] = settings.PERIODICALS_LINKS_ENABLED
+        context['form'] = LinkItemForm()
         return context
 
 
@@ -273,8 +279,8 @@ def links(request, periodical_slug):
 
 
 class LinkItemForm(forms.Form):
-    title = forms.CharField()
-    url = forms.URLField()
+    title = forms.CharField(widget=forms.TextInput(attrs={'size':'80'}))
+    url = forms.URLField(widget=forms.TextInput(attrs={'size':'80'}))
     recaptcha = ReCaptchaField()
 
 

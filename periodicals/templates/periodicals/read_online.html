@@ -4,7 +4,7 @@
 {% block title %}{{block.super}} - Periodical - {{periodical.name}} - Issues and Articles Online{% endblock %}
 
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;Issues and Articles Online</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;&gt;&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;&gt;&nbsp;Issues and Articles Online</div>
 {% endblock breadcrumbs%}
 
 {% block innercontent %}

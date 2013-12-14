@@ -2,8 +2,20 @@
 
 {% block title %}{{periodical.name}} - {{issue.display_name}} - {{issue.display_date}}{% endblock %}
 
+{% block javascript %}
+{{block.super}}
+<script>
+function open_add_link(button){
+    var div = document.getElementById('add_link'); 
+    div.style.display = 'block';
+    button.style.display = 'none';
+    return false;
+}
+</script>
+{% endblock javascript %}
+
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;{{issue.display_name}}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;&gt;&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;&gt;&nbsp;{{issue.display_name}}</div>
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
@@ -72,18 +84,26 @@
   {% endif %}
 </div>
 {% endblock obj_list %}
+{% if links_enabled %}
 {% block links %}
 <h2>Blog Posts, Web Pages, and Videos Referring to This Issue</h2>
-<table class="article-table table table-bordered table-striped" >
+<table class="article-table table table-bordered table-striped">
   {% for link in issue.active_links %}
   <tr><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
   {% endfor %}
 </table>
+{% block add_link %}
 <p class="add-link">
-  <a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url 'periodicals_add_issue_link' periodical.slug issue.slug %}">Add a related blog/web page/video to this issue</a>
+    <a class="btn btn-primary" target="page" rel="nofollow" onclick="open_add_link(this)" href="javascript:void(0)">Add a related blog/web page/video to this issue</a>
+  <div id="add_link" style="display:none;">
+    <form method="post" action="{% url 'periodicals_add_issue_link' periodical.slug issue.slug %}">
+      {% include "periodicals/add_link_form.html" %}
+    </form>
+  </div>
 </p>
+{% endblock add_link %}
 {% endblock links %}
-
+{% endif %}
 {% block pagination %}
 <ul class="pager">
   <li class="previous">{% if previous_month %}<a class="important-link" href="{{previous_month.get_absolute_url}}">{{previous_month}}</a>{% endif %}</li>

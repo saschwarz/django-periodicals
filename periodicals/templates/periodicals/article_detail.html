@@ -3,8 +3,20 @@
 
 {% block title %}{{block.super}} - {{periodical.name}} - {{issue.display_year}} - {{issue.display_name}} - {{article.title}}{% endblock %}
 
+{% block javascript %}
+{{block.super}}
+<script>
+function open_add_link(button){
+    var div = document.getElementById('add_link'); 
+    div.style.display = 'block';
+    button.style.display = 'none';
+    return false;
+}
+</script>
+{% endblock javascript %}
+
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;>&nbsp;<a href="{{issue.get_absolute_url}}">{{issue.display_name}}</a>{% if article.page %}&nbsp;>&nbsp;Page {{article.page}}{% endif %}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;&gt;&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_issue_year' periodical.slug issue.pub_date|date:"Y" %}">{{issue.pub_date|date:"Y"}}</a>&nbsp;&gt;&nbsp;<a href="{{issue.get_absolute_url}}">{{issue.display_name}}</a>{% if article.page %}&nbsp;&gt;&nbsp;Page {{article.page}}{% endif %}</div>
 {% endblock breadcrumbs %}
 
 {% block innercontent %}
@@ -73,6 +85,7 @@
   {% endif %}
 </div>
 {% endblock obj_detail %}
+{% if links_enabled %}
 {% block links %}
 <div class="article_tags">
   <h2>Article Tags</h2>
@@ -85,15 +98,23 @@
   <a href="{% url 'periodicals_tags' %}">All Article Tags</a>
 </div>
 <div class="article-links">
-<h2>Blog Posts, Web Pages, and Videos Referring to This Article</h2>
-<table class="article-table table table-bordered table-striped">
-  {% for link in article.active_links %}
-  <tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
-  {% endfor %}
-</table>
-<a target="page" rel="nofollow" onClick="window.open('','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=375,height=450,left=50,top=50,titlebar=0');" href="{% url 'periodicals_add_article_link' periodical.slug issue.slug article.slug %}">Add a related blog/web page/video to this article</a>
+  <h2>Blog Posts, Web Pages, and Videos Referring to This Article</h2>
+  <table class="article-table table table-bordered table-striped">
+    {% for link in article.active_links %}
+    <tr class="{% cycle 'even' 'odd' %}"><td><a href="{{link.url}}">{{link.title}}</a></td></tr>
+    {% endfor %}
+  </table>
+  <p class="add-link">
+    <a class="btn btn-primary" target="page" rel="nofollow" onclick="open_add_link(this)" href="javascript:void(0)">Add a related blog/web page/video to this article</a>
+    <div id="add_link" style="display:none;">
+      <form method="post" action="{% url 'periodicals_add_article_link' periodical.slug issue.slug article.slug %}">
+        {% include "periodicals/add_link_form.html" %}
+      </form>
+    </div>
+  </p>
 </div>
 {% endblock links %}
+{% endif %}
 {% block pagination %}
 <ul class="pager">
   <li class="previous">{% if previous_article %}<a class="important-link" href="{{previous_article.get_absolute_url}}" title="{{previous_article.series}}: {{previous_article.title}}">Previous Article</a>{% endif %}</li>

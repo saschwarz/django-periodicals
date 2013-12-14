@@ -4,7 +4,7 @@
 {% block title %}{{block.super}} - Articles Tagged: {{tag.name}} {% endblock %}
 
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_tags' %}">All Article Tags</a>&nbsp;>&nbsp;Tag: {{tag.name}}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_tags' %}">All Article Tags</a>&nbsp;&gt;&nbsp;Tag: {{tag.name}}</div>
 {% endblock breadcrumbs %}
 
 {% block innercontent %}

@@ -162,6 +162,7 @@ class TestIssueViews(TestSetup):
         self.assertEqual(None, previous_month)
         next_month = resp.context['next_month']
         self.assertEqual(None, next_month)
+        self.assertTrue(resp.context['links_enabled'])
 
     def test_issue_detail_with_previous_and_next_issues(self):
         resp = self.client.get(
@@ -178,6 +179,7 @@ class TestIssueViews(TestSetup):
         self.assertEqual(self.issue0, previous_month)
         next_month = resp.context['next_month']
         self.assertEqual(self.issue2, next_month)
+        self.assertTrue(resp.context['links_enabled'])
 
     def test_save_with_duplicate_volume_issue_on_same_date_gives_different_slug(self):
         dup_issue1 = Issue(periodical=self.periodical,
@@ -288,6 +290,7 @@ class TestArticleDetailView(TestSetup):
         self.assertEqual(None, next_article)
         previous_article = resp.context['previous_article']
         self.assertEqual(None, previous_article)
+        self.assertTrue(resp.context['links_enabled'])
 
     def test_article_detail_one_previous_and_one_next_article(self):
         self.article1.page = 8
@@ -316,6 +319,7 @@ class TestArticleDetailView(TestSetup):
         self.assertEqual(article2, next_article)
         previous_article = resp.context['previous_article']
         self.assertEqual(self.article1, previous_article)
+        self.assertTrue(resp.context['links_enabled'])
 
 
 class TestReadOnline(TestSetup):

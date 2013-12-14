@@ -4,7 +4,7 @@
 {% block title %}{{block.super}} - {{periodical.name}} - Series: {{series}}{% endblock %}
 
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="/">Home</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;>&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;>&nbsp;<a href="{% url 'periodicals_series_list' periodical.slug %}">All Article Series</a>&nbsp;>&nbsp;{{series}}</div>
+<div class="breadcrumbs"><a href="/">Home</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_list' %}">Periodicals</a>&nbsp;&gt;&nbsp;<a href="{{periodical.get_absolute_url}}">{{periodical.name}}</a>&nbsp;&gt;&nbsp;<a href="{% url 'periodicals_series_list' periodical.slug %}">All Article Series</a>&nbsp;&gt;&nbsp;{{series}}</div>
 {% endblock breadcrumbs %}
 
 {% block innercontent %}

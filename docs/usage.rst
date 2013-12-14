@@ -76,22 +76,22 @@ Override Templates/Blocks
 
 Here is the template inheritance diagram::
 
-                                    /---base.html---
-                              /-----        |       \----
-                        /-----              |            \-----
-                  /-----                    |                  \----
-               ---                          |                       \--
-      base_periodicals.html          article_tag_detail.html       popup.html
-          (adds search)              author_detail.html                 |
-               |                     author_list.html                   |
-               |                     base_periodicals.html              |
-               |                     search.html                        |
-               |                     tags.html                          |
-               |                                                        |
-               |                                                        |
-       base_periodical.html                                        link_add.html
-  (adds copyright per periodical)                                  link_success.html
-               |
+                                    /---base.html--
+                              /-----               \--
+                        /-----                        \-
+                  /-----                                \--
+               ---                                         \
+      base_periodicals.html                      article_tag_detail.html
+          (adds search)                          author_detail.html
+               |     ---                         author_list.html
+               |        \---                     link_add.html
+               |            \---                 link_success.html
+               |                \----            search.html
+               |                     \---        tags.html
+               |                         \---
+               |                             \
+       base_periodical.html          periodical_list.html
+  (adds copyright per periodical)
                |
                |
        article_detail.html
@@ -142,6 +142,16 @@ You can control the display format for Author, Periodical, and Issue instances a
     PERIODICALS_ISSUE_SLUG_FORMAT = "%(volume)s %(issue)s"
 
 
+Disabling Adding/Displaying Links
++++++++++++++++++++++++++++++++++
+
+By default visitors can add moderated links to each Issue or Article. Once approved via the admin they are displayed on the appropriate Issue/Article page. To disable this feature and the sections within pages displaying links add this to ``settings.py``:
+
+.. code-block :: python
+
+   PERIODICALS_LINKS_ENABLED = False
+
+
 Entering Data
 =============
 
@@ -166,7 +176,7 @@ Since adding Articles will likely be an occasional operation ``django-periodical
 Sitemap Support
 ===============
 
-``django-periodicals`` provides sitemap.xml support via `django.contrib.sitemaps <https://docs.djangoproject.com/en/dev/ref/contrib/sitemaps/>`_. 
+``django-periodicals`` provides sitemap.xml support via `django.contrib.sitemaps <https://docs.djangoproject.com/en/dev/ref/contrib/sitemaps/>`_.
 
 #. Install ``django'contrib.sitemaps`` in you ``settings.py``:
 
