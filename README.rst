@@ -111,7 +111,7 @@ Management Commands
 Features
 --------
 
-I developed ``django-periodicals`` to provide a searchable index for a printed magazine. I wanted all the meta data to be fully cross linked. So users can easily browse all articles for an author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
+I developed ``django-periodicals`` to provide a searchable index for a printed/online magazine. I wanted all the meta data to be fully cross linked. So users can easily browse all articles for an author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
 
 I turned it in to a standalone application when I ported it to Django 1.5. Here are the features:
 
@@ -133,7 +133,7 @@ I turned it in to a standalone application when I ported it to Django 1.5. Here 
 
     * Tag cloud.
 
-* Moderated user added links of blog posts and other web resources to each Issue and Article. Spam protection by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin.
+* Moderated user added links of blog posts and other web resources to each Issue and Article. Spam protection by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin. This feature can be disabled via setting.
 
 * Django admin forms for data entry.
 

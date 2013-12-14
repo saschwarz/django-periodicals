@@ -3,16 +3,22 @@
     <tr><td><label>Web Page Title:</label></td><td>{{form.title}} <span class="required">*</span></td>
     {% if form.title.errors %}
       <td class="title-error">{{form.title.errors}}</td>
+    {% else %}
+      <td></td>
     {% endif %}
     </tr>
     <tr><td><label>Web Page URL:</label></td><td>{{form.url}} <span class="required">*</span></td>
     {% if form.url.errors %}
       <td class="url-error">{{form.url.errors}}</td>
+    {% else %}
+      <td></td>
     {% endif %}
     </tr>
     <tr><td colspan="2">{{form.recaptcha}}</td>
       {% if form.recaptcha.errors %}
       <td class="recaptcha-error">{{form.recaptcha.errors}}</td>
+      {% else %}
+      <td></td>
       {% endif %}
     </tr>
     <tr><td colspan="3" class="add-link"><input class="btn btn-primary" type="submit" value="Add Link"></td></tr>

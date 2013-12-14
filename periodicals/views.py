@@ -18,6 +18,7 @@ from .models import Author, Periodical, Issue, Article, LinkItem
 
 settings.PERIODICALS_PAGINATION = getattr(settings, 'PERIODICALS_PAGINATION', 20)
 settings.PERIODICALS_LINKS_ENABLED = getattr(settings, 'PERIODICALS_LINKS_ENABLED', True)
+settings.PERIODICALS_EMAIL_NOTIFY = getattr(settings, 'PERIODICALS_EMAIL_NOTIFY', True)
 
 
 class AuthorList(ListView):
@@ -266,8 +267,12 @@ def add_issue_link(request, periodical_slug, issue_slug):
 def links(request, periodical_slug):
     periodical = get_object_or_404(Periodical, slug=periodical_slug)
     # Load all the links and their related Issues/Article instances efficiently
-    articles = Article.objects.filter(issue__periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-issue__pub_date')
-    issues = Issue.objects.filter(periodical=periodical).filter(links__status='A').distinct().select_related().order_by('-pub_date')
+    articles = Article.objects.filter(issue__periodical=periodical).\
+        filter(links__status='A').distinct().select_related().\
+        order_by('-issue__pub_date')
+    issues = Issue.objects.filter(periodical=periodical).\
+        filter(links__status='A').distinct().select_related().\
+        order_by('-pub_date')
 
     return render_to_response('periodicals/links.html',
                               {'articles': articles,
@@ -279,8 +284,8 @@ def links(request, periodical_slug):
 
 
 class LinkItemForm(forms.Form):
-    title = forms.CharField(widget=forms.TextInput(attrs={'size':'80'}))
-    url = forms.URLField(widget=forms.TextInput(attrs={'size':'80'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'size': '60'}))
+    url = forms.URLField(widget=forms.TextInput(attrs={'size': '60'}))
     recaptcha = ReCaptchaField()
 
 
@@ -295,12 +300,13 @@ def add_link(request, instance,
             instance.links.create(status=LinkItem.STATUS_SUBMITTED,
                                   url=form.cleaned_data['url'],
                                   title=form.cleaned_data['title'])
-            email_body = "Link added to: http://%s%s admin: http://%s%s" % (
-                Site.objects.get_current().domain,
-                instance.get_absolute_url(),
-                Site.objects.get_current().domain,
-                admin_url)
-            mail_managers("New Link Added", email_body)
+            if settings.PERIODICALS_EMAIL_NOTIFY:
+                email_body = "Link added to: http://%s%s admin: http://%s%s" % (
+                    Site.objects.get_current().domain,
+                    instance.get_absolute_url(),
+                    Site.objects.get_current().domain,
+                    admin_url)
+                mail_managers("New Link Added", email_body)
             return HttpResponseRedirect(success_url)
     else:
         form = form_class()

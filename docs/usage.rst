@@ -35,12 +35,14 @@ Configure your Haystack backend. Here is an example using `Whoosh <https://bitbu
         },
     }
 
-Configure your reCAPTCHA keys - only used when users add links to Articles or Issues:
+Configure your reCAPTCHA keys - only used when users add links to Articles or Issues (this feature can be disabled):
 
 .. code-block :: python
 
     RECAPTCHA_PRIVATE_KEY = "your-recaptcha-private-key"
     RECAPTCHA_PUBLIC_KEY = "your-recaptcha-public-key"
+
+Configure you Site in the Django Site application - only used when users add links to Articles or Issues *and* when you haven't disabled email notifications.
 
 
 urls.py
@@ -151,6 +153,11 @@ By default visitors can add moderated links to each Issue or Article. Once appro
 
    PERIODICALS_LINKS_ENABLED = False
 
+By default when links are added an email is sent to managers configured for the Site in the Django admin. To disable this feature add this to ``settings.py``:
+
+.. code-block :: python
+
+   PERIODICALS_EMAIL_NOTIFY = False
 
 Entering Data
 =============
