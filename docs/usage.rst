@@ -69,64 +69,6 @@ Database Setup
      $ python manage.py syncdb
 
 
-Override Templates/Blocks
-=========================
-
-``django-periodicals`` provides a full set of templates for displaying the data models and their relationships, searching and adding moderated links. So you can just use it right out of the box.
-
-``django-periodicals`` defines major template blocks: ``title``, ``breadcrumbs``, ``innercontent`` and ``copyright`` that you can incorporate into your own ``base.html``. There are numerous CSS classes and container ``divs`` to give design layout options without needing to rewrite the templates.
-
-Here is the template inheritance diagram::
-
-                                    /---base.html--
-                              /-----               \--
-                        /-----                        \-
-                  /-----                                \--
-               ---                                         \
-      base_periodicals.html                      article_tag_detail.html
-          (adds search)                          author_detail.html
-               |     ---                         author_list.html
-               |        \---                     link_add.html
-               |            \---                 link_success.html
-               |                \----            search.html
-               |                     \---        tags.html
-               |                         \---
-               |                             \
-       base_periodical.html          periodical_list.html
-  (adds copyright per periodical)
-               |
-               |
-       article_detail.html
-       issue_detail.html
-       issue_year.html
-       links.html
-       periodical_detail.html
-       read_online.html
-       series_detail.html
-       series_list.html
-
-You might override ``base.html`` in your existing "glue" application:
-
-.. code-block :: bash
-
-   $ cd myapp
-
-   $ mkdir -p templates/periodicals/
-
-   $ emacs base.html
-
-You might override it as follows to use your application's base template and to discard the ``breadcrumbs`` block from the ``content`` block.
-
-.. code-block :: html
-
-   {% extends myapp/base.html %}
-
-   {% block content %}
-   {% block innercontent %}{% endblock innercontent %}
-   {% block copyright %}{% endblock copyright %}
-   {% endblock content %}
-
-
 Optional Settings
 =================
 
@@ -209,3 +151,62 @@ Sitemap Support
       ...
       (r'^sitemap.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps_at('/periodicals')}),
   )
+
+
+Override Templates/Blocks
+=========================
+
+``django-periodicals`` provides a full set of templates for displaying the data models and their relationships, searching and adding moderated links. So you can just use it right out of the box.
+
+``django-periodicals`` defines major template blocks: ``title``, ``breadcrumbs``, ``innercontent`` and ``copyright`` that you can incorporate into your own ``base.html``. There are numerous CSS classes and container ``divs`` to give design layout options without needing to rewrite the templates.
+
+Here is the template inheritance diagram::
+
+                                    /---base.html--
+                              /-----               \--
+                        /-----                        \-
+                  /-----                                \--
+               ---                                         \
+      base_periodicals.html                      article_tag_detail.html
+          (adds search)                          author_detail.html
+               |     ---                         author_list.html
+               |        \---                     link_add.html
+               |            \---                 link_success.html
+               |                \----            search.html
+               |                     \---        tags.html
+               |                         \---
+               |                             \
+       base_periodical.html          periodical_list.html
+  (adds copyright per periodical)
+               |
+               |
+       article_detail.html
+       issue_detail.html
+       issue_year.html
+       links.html
+       periodical_detail.html
+       read_online.html
+       series_detail.html
+       series_list.html
+
+You might override ``base.html`` in your existing "glue" application:
+
+.. code-block :: bash
+
+   $ cd myapp
+
+   $ mkdir -p templates/periodicals/
+
+   $ emacs base.html
+
+You might override it as follows to use your application's base template and to discard the ``breadcrumbs`` block from the ``content`` block.
+
+.. code-block :: html
+
+   {% extends myapp/base.html %}
+
+   {% block content %}
+   {% block innercontent %}{% endblock innercontent %}
+   {% block copyright %}{% endblock copyright %}
+   {% endblock content %}
+

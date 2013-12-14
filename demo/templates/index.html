@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>django-periodicals</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <style>
+      html, body {
+      font-size: 1.1em;
+      height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="https://github.com/saschwarz/django-periodicals">django-periodicals</a>
+          <ul class="nav navbar-nav navbar-left">
+            <li><a href="{% url 'periodicals_list' %}">Periodicals</a></li>
+            <li><a href="{% url 'periodicals_authors_list' %}">Authors</a></li>
+            <li><a href="{% url 'periodicals_tags' %}">Tags</a></li>
+          </ul>
+          <form class="navbar-form navbar-right" role="search" action="{% url 'haystack_search' %}" method="get">
+            <div class="form-group">
+              <input type="text" id="id_q" name="q" size="51" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="jumbotron">
+      <div class="container">
+        <h1><tt>django-periodicals</tt></h1>
+        <p>This is the demonstration site for <tt>django-periodicals</tt>. A Django application for periodical/magazine websites with fully cross linked indices. There are list and detail views for: Periodical, Issue, Article, Author, Article Series and Tags. The application provides full text search of article titles and descriptions. A complete set of templates are provided. A sitemap is also dynamically generated.
+</p><p>This demonstration shows how the templates can be easily customized and styled. Bootstrap isn't required/used by the default templates.</p>
+        <p><a class="btn btn-primary btn-lg" role="button" href="{% url 'periodicals_list' %}">See it in action &raquo;</a></p>
+      </div>
+    </div>
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Fully Browsable</h2>
+          <p>Links are automatically created to allow visitors to move between Issues, Series of Articles, Tags, Authors and forward and backward in time. </p>
+          <p><a class="btn btn-default" role="button" href="/periodicals/cleanrun/16-12/developing-training-plans-for-students/">View an article &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2>Full Text Search</h2>
+          <p>Article titles and descriptions as indexed by Haystack and can be search. Like all all other pages the results are fully cross linked.</p>
+          <p><a class="btn btn-default" role="button" href="/periodicals/search/?q=training">Search results for 'training' &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>Tagging</h2>
+          <p>Articles can be tagged to help visitors identify articles related to any other article.</p>
+          <p><a class="btn btn-default" href="{% url 'periodicals_tags' %}" role="button">View all tags &raquo;</a></p>
+        </div>
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; Steve Schwarz 2013</p>
+      </footer>
+    </div> <!-- /container -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  </body>
+</html>

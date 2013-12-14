@@ -40,3 +40,10 @@ output/*/index.html
 
 # Sphinx
 docs/_build
+
+# sqlite database
+*.sqlite3
+*.sqlite
+
+demoenv # demonstration virtualenv
+htmlcov # coverage html

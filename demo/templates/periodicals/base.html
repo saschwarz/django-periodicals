@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>django-periodicals demo - {% block title %}{% endblock title %}</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+  <style>
+/* some basic styles to make the pages more attractive */
+html, body {
+  font-size: 1.1em;
+  height: 100%;
+}
+
+.navbar-header { width: 100% }
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -40px;
+  /* Pad bottom by footer height */
+  padding: 0 0 40px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 40px;
+  background-color: #f5f5f5;
+}
+#wrap > .container {
+  padding: 60px 15px 0;
+}
+.tag-cloud {
+text-align:center;
+border:1px solid #BBB;
+padding:5px;
+}
+.tag-cloud span {
+line-height:25px;
+padding:4px;
+}
+.tag-1 {
+font-size:12px;
+font-weight:100;
+}
+.tag-2 {
+font-size:13px;
+font-weight:200;
+}
+.tag-3 {
+font-size:14px;
+font-weight:300;
+}
+.tag-4 {
+font-size:15px;
+font-weight:400;
+}
+.tag-5 {
+font-size:16px;
+font-weight:500;
+}
+.tag-6 {
+font-size:17px;
+font-weight:600;
+}
+.tag-7 {
+font-size:18px;
+font-weight:700;
+}
+.tag-8 {
+font-size:19px;
+font-weight:800;
+}
+.periodical-logo, .article-image {
+float:right;
+margin:16px;
+}
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="https://github.com/saschwarz/django-periodicals">django-periodicals</a>
+          <ul class="nav navbar-nav navbar-left">
+            <li><a href="{% url 'periodicals_list' %}">Periodicals</a></li>
+            <li><a href="{% url 'periodicals_authors_list' %}">Authors</a></li>
+            <li><a href="{% url 'periodicals_tags' %}">Tags</a></li>
+          </ul>
+          <form class="navbar-form navbar-right" role="search" action="{% url 'haystack_search' %}" method="get">
+            <div class="form-group">
+              <input type="text" id="id_q" name="q" size="51" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      {% block content %}
+      {% block breadcrumbs %}{% endblock breadcrumbs %}
+      {% block innercontent %}{% endblock innercontent %}
+      {% endblock content %}
+    </div>
+  </div>
+  <div id="footer">
+    <div class="container">
+      <p>
+        {% block copyright %}{% endblock copyright %}
+      </p>
+    </div>
+  </div>
+  {% block javascript %}{% endblock javascript %}
+</body>
+</html>

@@ -141,7 +141,8 @@ class IssueYear(YearArchiveView):
         periodical_slug = self.kwargs['periodical_slug']
         periodical = get_object_or_404(Periodical, slug=periodical_slug)
         self.periodical = periodical
-        qs = super(IssueYear, self).get_queryset().filter(periodical=periodical)
+        qs = super(IssueYear, self).get_queryset().\
+            filter(periodical=periodical).reverse()
         return qs
 
     def get_context_data(self, **kwargs):

@@ -22,7 +22,7 @@ Install two packages/applications manually to get newer versions than are curren
 
   $ pip install -e git://github.com/nemith/django-tagging.git@dev-django1.5#egg=django_tagging-dev
 
-Continue installing with Haystack below.
+Continue installing with `Install a Haystack Backend`_ below.
 
 
 .. _installing-from-github:
@@ -43,6 +43,7 @@ This lets you install all the requirements using ``pip`` and the ``requirements.
   $ python setup.py install
 
 
+
 Install a Haystack Backend
 ==========================
 
@@ -51,3 +52,5 @@ Install a search backend for use by `Haystack <http://haystacksearch.org/>`_. To
 .. code-block :: bash
 
   $ pip install Whoosh
+
+:ref:`try-the-demo-project`
