@@ -21,17 +21,57 @@ Documentation
 -------------
 
 The full documentation is at http://django-periodicals.rtfd.org.
+  
+
+Features
+--------
+
+I developed ``django-periodicals`` to provide a searchable index for a printed/online magazine. I wanted all the meta data to be fully cross linked. So users can easily browse all articles for an author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
+
+I turned it in to a standalone application when I ported it to Django 1.5. Here are the features:
+
+* Provides Django models for Periodicals, Issues, Articles, Authors, Tags and Links to external material. 
+
+* A full set of templates are provided including:
+
+  * Individual Periodical pages with yearly indices.
+
+  * Fully cross-linked indexes of Authors, Issues, Article Series, Tags, and Articles.
+
+  * Search across Article titles and descriptions.
+
+  * Tagging:
+
+    * Per article.
+
+    * Index pages per tag.
+
+    * Tag cloud.
+
+* Moderated user added links of blog posts and other web resources to each Issue and Article. Spam protection by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin. This feature can be disabled via setting.
+
+* Django admin forms for data entry.
+
+* Sitemap support.
+
+* Support for Python 2.6, 2.7 and Django 1.5 and 1.6.
+
+* Travis CI unit tests.
+
+* See ``django-periodicals`` in action at `Googility <http://googility.com/periodicals/>`_.
 
 Quickstart
 ----------
 
-Simple to install from a package using ``pip`` which will install all it's dependencies (coming soon). For now see `installing-from-github <http://django-periodicals.readthedocs.org/en/latest/installation.html#installing-from-github>`_.
+You can install from GitHub and try out a fully functional demo with data: :ref:`try-the-demo-project`.
+
+Otherwise simply install from a package using ``pip`` which will install it's `PyPi <https://pypi.python.org/pypi>`_ packaged dependencies.
 
 .. code-block :: bash
 
     pip install django-periodicals
 
-Install two packages manually to get newer versions than are currently in `PyPi <https://pypi.python.org/pypi>`_:
+Install two packages manually to get newer versions than are currently in PyPi:
 
 .. code-block :: bash
 
@@ -103,44 +143,8 @@ Choose a URL prefix at which to base the application:
 Management Commands
 +++++++++++++++++++
 
+Create the application's database tables:
+
 .. code-block :: bash
 
     $ python manage.py syncdb
-  
-
-Features
---------
-
-I developed ``django-periodicals`` to provide a searchable index for a printed/online magazine. I wanted all the meta data to be fully cross linked. So users can easily browse all articles for an author, all articles in an issue, all articles in a series/category, all articles tagged with a keyword and so forth. 
-
-I turned it in to a standalone application when I ported it to Django 1.5. Here are the features:
-
-* Provides Django models for Periodicals, Issues, Articles, Authors, Tags and Links to external material. 
-
-* A full set of templates are provided including:
-
-  * Individual Periodical pages with yearly indices.
-
-  * Fully cross-linked indexes of Authors, Issues, Article Series, Tags, and Articles.
-
-  * Search across Article titles and descriptions.
-
-  * Tagging:
-
-    * Per article.
-
-    * Index pages per tag.
-
-    * Tag cloud.
-
-* Moderated user added links of blog posts and other web resources to each Issue and Article. Spam protection by `reCAPTCHA <http://www.google.com/recaptcha>`_ and requiring approval by the admin. This feature can be disabled via setting.
-
-* Django admin forms for data entry.
-
-* Sitemap support.
-
-* Support for Python 2.6, 2.7 and Django 1.5 and 1.6.
-
-* Travis CI unit tests.
-
-* See ``django-periodicals`` in action at `Googility <http://googility.com/periodicals/>`_.

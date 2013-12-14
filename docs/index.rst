@@ -13,8 +13,8 @@ Contents:
 
    readme
    installation
-   usage
    demo
+   usage
    contributing
    authors
    history

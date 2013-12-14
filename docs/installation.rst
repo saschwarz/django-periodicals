@@ -30,7 +30,7 @@ Continue installing with `Install a Haystack Backend`_ below.
 Installing from GitHub
 ======================
 
-This lets you install all the requirements using ``pip`` and the ``requirements.txt`` file:
+This lets you install all the requirements using ``pip`` and the ``requirements.txt`` file. 
 
 .. code-block :: bash
 
@@ -42,7 +42,7 @@ This lets you install all the requirements using ``pip`` and the ``requirements.
 
   $ python setup.py install
 
-
+In the checkout there is a ``demo`` subdirectory containing a demonstration environment with data so you can :ref:`try-the-demo-project`.
 
 Install a Haystack Backend
 ==========================
@@ -53,4 +53,4 @@ Install a search backend for use by `Haystack <http://haystacksearch.org/>`_. To
 
   $ pip install Whoosh
 
-:ref:`try-the-demo-project`
+
